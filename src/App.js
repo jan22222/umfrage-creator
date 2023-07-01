@@ -1,5 +1,7 @@
 import React from 'react';
 import './App.css';
+import AddAnswer from "./components/AddAnswer"
+import AddSurvey from './components/AddSurvey'
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
 import { useState, useEffect } from 'react';
@@ -9,7 +11,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar"
 // import Surveys from "./components/Surveys"
-
+import AddQuestion from './components/AddQuestion';
 
 import {onSnapshot} from "firebase/firestore";
 import Answers from "./components/Answers"
@@ -42,7 +44,9 @@ function App() {
 
 
   const [times, setTimes] = useState([]);
-    const [times2, setTimes2] = useState([]);
+  const [times2, setTimes2] = useState([]);
+  const [times3, setTimes3] = useState([]);
+
     useEffect(() => {
       
       const colRef = collection(db, "test")
@@ -65,27 +69,59 @@ function App() {
               }));
               setTimes2(newTimes2);
             });   
-    }, [currentSurvey])
+          if (currentQuestion.length > 0){
+            const docRef2 = doc(colRef2, currentQuestion)
+            const colRef3 = collection(docRef2, "answers")
+            const unsubscribe3 = onSnapshot(colRef3, snapshot => {
+              const newTimes3 = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              }));
+              setTimes3(newTimes3);
+            });  
+          }
 
-  const addAnswer = answer => {
-    const docRef1 = doc(db, "test", currentSurvey.id)
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/firebase.User
+              const uid = user.uid;
+              setUser({uid})
+              // ...
+              console.log("user", user.uid)
+              console.log("survey", currentSurvey)
+            } else {
+              // User is signed out
+              // ...
+              console.log("user is logged out")
+            }
+          });
+
+
+    }, [currentSurvey,currentQuestion,user])
+
+  const createAnswer = answer => {
+    const docRef1 = doc(db, "test", currentSurvey)
     const colRef1 = collection(docRef1, "questions")
-    const docRef2 = doc(colRef1, currentQuestion.id)
+    const docRef2 = doc(colRef1, currentQuestion)
     const colRef2 = collection(docRef2, "answers")
-    addDoc(colRef2, answer)
+    addDoc(colRef2, {answer})
  }
-  const addQuestion = question => {
+
+  const createQuestion = question => {
     console.log("addQuestion called")
-    console.log("Survey is ",currentSurvey.id)
+    console.log("Survey is ",currentSurvey)
     console.log("question is ", question)
-    const docRef = doc(db, "test", currentSurvey.id)
+    const docRef = doc(db, "test", currentSurvey)
     const colRef = collection(docRef, "questions")
-    addDoc(colRef, question)
+    addDoc(colRef, {text : question})
  }
-  const addSurvey = survey => {
+ 
+  const createSurvey = title => {
      const ref = collection(db, "test")
-     addDoc(ref, {name: survey.name})
-     console.log("addSurvey")
+     console.log(title)
+     addDoc(ref, {title})
+     console.log("addSurvey rendered")
   }
 
   const editSurveyRow = (survey)=>{
@@ -146,29 +182,16 @@ function App() {
   const Klick = (id) => {
     setCurrentSurvey(id)
   }
-  // useEffect(()=>{
-  //   onAuthStateChanged(auth, (user) => {
-  //       if (user) {
-  //         // User is signed in, see docs for a list of available properties
-  //         // https://firebase.google.com/docs/reference/js/firebase.User
-  //         const uid = user.uid;
-  //         setUser({uid})
-  //         // ...
-  //         console.log("user", user.uid)
-  //         console.log("survey", currentSurvey)
-  //       } else {
-  //         // User is signed out
-  //         // ...
-  //         console.log("user is logged out")
-  //       }
-  //     });
-    
-      
 
+  const KlickQuestion = (question) => {
+    setCurrentQuestion(question)
+  }
 
-  // }, [])
   return (
     <>
+    <h2>
+      User-ID: {!user ? "Not logged in." : user.id}
+    </h2>
     <h1>Current Survey {currentSurvey} <div>
         <ul>{times.length > 0 ? (
           times.map(item => (
@@ -188,13 +211,43 @@ function App() {
           
         </ul>
       </div></h1>
-      <h1>Questions  <div>
+      <AddSurvey
+        createSurvey = {createSurvey}
+      />
+      <h1>Questions {currentQuestion.id} <div>
         <ul>{times2.length > 0 ? (
           times2.map(item => (
-            <li key={item}>{item.id}</li>
-          ))):<li>empty</li>}
+            <li key={item.id}>{item.id}
+            <button 
+            onClick={() => KlickQuestion(item.id)}
+             
+            >
+              Pick
+            </button>
+          </li>
+          
+        ))
+          ):<li>empty</li>}
         </ul>
       </div></h1>
+      <AddQuestion
+        createQuestion = {createQuestion}
+      />
+      <h1>Answers  <div>
+        <ul>{times3.length > 0 ? (
+          times3.map(item => (
+            <li key={item.id}>{item.answer}
+              
+            </li>
+          
+        ))
+          ):<li>empty</li>}
+        </ul>
+      </div>
+      <AddAnswer
+        createAnswer = {createAnswer}
+      />
+      </h1>
     <Router>
 
       <Navbar />
