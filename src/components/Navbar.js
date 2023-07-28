@@ -20,7 +20,7 @@ export default function Navbar(){
   const navigate = useNavigate()
   const menuItems = [
     {
-      text: "Edit the Surveys",
+      text: "Umfragen",
       icon: <SubjectIcon color="secondary"/>,
       path : "/editor"
     },
@@ -30,20 +30,21 @@ export default function Navbar(){
       path : "/home"
     },
     {
-      text: "Sign Up",
+      text: "Einschreiben",
       icon: <SubjectIcon color="secondary"/>,
       path : "/signup"
     },
     {
-      text: "Sign in",
+      text: "Anmelden",
       icon: <SubjectIcon color="secondary"/>,
       path : "/signin"
     },
     {
-      text: "Edit the Surveys",
+      text: "Ausloggen",
       icon: <SubjectIcon color="secondary"/>,
-      path : "/editor"
+      path : "/logout"
     },
+   
   ]
   const hoveredStyle = {
       cursor: "grab"
@@ -68,18 +69,7 @@ export default function Navbar(){
       })}
     
     </List>
-    <FormControl>
-  <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-  <RadioGroup
-    aria-labelledby="demo-radio-buttons-group-label"
-    defaultValue="female"
-    name="radio-buttons-group"
-  >
-    <FormControlLabel value="female" control={<Radio />} label="Female" />
-    <FormControlLabel value="male" control={<Radio />} label="Male" />
-    <FormControlLabel value="other" control={<Radio />} label="Other" />
-  </RadioGroup>
-</FormControl>
+  
   </>
   );
 }

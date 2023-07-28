@@ -14,10 +14,10 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 const states = []
 
-const Example = ({data, deleteSurvey, updateSurvey}) => {
+const Example = ({data, uuid, deleteSurvey, updateSurvey, createSurvey}) => {
   useEffect(()=>{
     setTableData(data)
     console.log("data in surveygrid" , data, "data in tableData", tableData)
@@ -27,8 +27,10 @@ const Example = ({data, deleteSurvey, updateSurvey}) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   const handleCreateNewRow = (values) => {
-    tableData.push(values);
-    setTableData([...tableData]);
+    if (values.id===""){
+      
+    }
+    createSurvey(values)
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
@@ -171,6 +173,13 @@ const Example = ({data, deleteSurvey, updateSurvey}) => {
                 <Delete />
               </IconButton>
             </Tooltip>
+            <Tooltip arrow placement="right" title="Link">
+              <IconButton color="error" >
+                <a href={"/survey/"+uuid+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
+              </IconButton>
+            </Tooltip>
+                        
+
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
@@ -220,16 +229,18 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
               gap: '1.5rem',
             }}
           >
-            {columns.map((column) => (
-              <TextField
-                key={column.accessorKey}
-                label={column.header}
-                name={column.accessorKey}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
+            {columns.map((column) => {
+              if (column.accessorKey!="id") {
+                return (
+                  <TextField
+                    key={column.accessorKey}
+                    label={column.header}
+                    name={column.accessorKey}
+                    onChange={(e) =>
+                      setValues({ ...values, [e.target.name]: e.target.value })
+                    }
+                  />
+            )}})}
           </Stack>
         </form>
       </DialogContent>
@@ -243,7 +254,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   );
 };
 
-const validateRequired = (value) => !!value.length;
+const validateRequired = (value) => !!value.length? value.length < 60: false;
 const validateEmail = (email) =>
   !!email.length &&
   email

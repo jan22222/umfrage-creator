@@ -63,11 +63,11 @@ export default function Editor({user}) {
     addDoc(colRef, {text : question})
  }
 
-  const createSurvey = title => {
+  const createSurvey = values => {
      const ref = collection(db, user.uid)
-     console.log(title)
-     addDoc(ref, {title})
-     console.log("addSurvey rendered")
+     console.log(values.title)
+     addDoc(ref, {title: values.title})
+     console.log("createSurvey  ")
   }
 
   const editSurveyRow = (survey)=>{
@@ -233,35 +233,11 @@ export default function Editor({user}) {
 
   return (
     <>
-    <SC data = {times} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
+    <SC uuid={user.uid} data = {times} createSurvey={createSurvey} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
     <h2>
       User-ID: {!user ? "Not logged in." : user.id}
     </h2>
-    <h1>Current Survey {currentSurvey.title} <div>
-        <p>Go to survey </p>
-       
-        <a href={"/survey/"+user.uid+"/"+currentSurvey.id}>{currentSurvey.title}</a>
-        <ul>{times.length > 0 ? (
-          times.map(item => (
-            <li key={item.id}>{item.title}
-              <button
-              onClick={() => Klick(item)}
-
-              >
-                Pick
-              </button>
-            </li>
-
-          ))
-
-          ):<li>empty</li>
-          }
-
-        </ul>
-      </div></h1>
-      <AddSurvey
-        createSurvey = {createSurvey}
-      />
+   
       {/* <h1>Questions {currentQuestion.text} <div>
         <ul>{times2.length > 0 ? (
           times2.map(item => (
