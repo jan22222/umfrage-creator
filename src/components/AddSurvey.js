@@ -1,5 +1,5 @@
 import react from 'react';
-
+import { TextField, Grid, Button } from '@mui/material';
 import {useState, useEffect} from 'react';
 
 export default function AddSurvey({createSurvey}){
@@ -8,8 +8,9 @@ export default function AddSurvey({createSurvey}){
 
     const submitSurvey = (e) => {
         e.preventDefault()
-        console.log(entry)
-        createSurvey(entry) // from App.js : function of firestore actions
+        if (entry.length <= 60) {
+            createSurvey(entry)
+        } // from App.js : function of firestore actions
     }
 
     const handleChange = (e) => {
@@ -23,14 +24,25 @@ export default function AddSurvey({createSurvey}){
                 Add a Survey
             </h1>
             <form onSubmit = {submitSurvey}>
-                <input 
-                    type = "text"
+             <Grid container fullWidth> 
+                <Grid item xs={6}>
+                <TextField
+                required
+                    variant = "outlined"
+                    label = "Titel"
+                    color="secondary"
+                    type="text"
+                    sx={{mb: 3}}
+                    fullWidth
                     value = {entry.length === 0 ? "" : entry}
                     onChange = {handleChange}
+                    error={entry === ""  || entry.length > 60}
+                    helperText={entry.length > 60 ? 'Zu langer Text!' : ' '}
                 />
-                    <button type='submit'>
-                        Add
-                    </button>   
+                    
+                </Grid>
+            </Grid>
+            <Button variant="contained" type = "submit">Erstellen</Button>  
                 
             </form>
         </div>
