@@ -17,7 +17,7 @@ import { Delete, Edit } from '@mui/icons-material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 const states = []
 
-const Example = ({data, uuid, deleteSurvey, updateSurvey, createSurvey}) => {
+const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
   useEffect(()=>{
     setTableData(data)
     console.log("data in surveygrid" , data, "data in tableData", tableData)
@@ -175,10 +175,14 @@ const Example = ({data, uuid, deleteSurvey, updateSurvey, createSurvey}) => {
             </Tooltip>
             <Tooltip arrow placement="right" title="Link">
               <IconButton color="error" >
-                <a href={"/survey/"+uuid+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
+                <a href={"/survey/"+user.uid+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
               </IconButton>
             </Tooltip>
-                        
+            <Tooltip arrow placement="right" title="Link">
+              <IconButton color="error" >
+                <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Zum Carousel</a>
+              </IconButton>
+            </Tooltip>              
 
           </Box>
         )}

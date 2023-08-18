@@ -1,4 +1,5 @@
-import { makeStyles } from "@mui/styles";
+import { makeStyles} from "@mui/styles";
+import AppBar from '@mui/material/AppBar';
 import Drawer from '@mui/material/Drawer';
 import React from "react"
 import Navbar from "./Navbar.js"
@@ -10,7 +11,14 @@ const useStyles = makeStyles({
     },
     drawer:{
         width: "300px"
-    }
+    },
+        abRoot: {
+          backgroundColor: "red"
+        },
+        abStatic: {
+        
+        }
+   
 })
 
 export default function Layout({children}){
@@ -18,6 +26,14 @@ export default function Layout({children}){
 
     return(
         <div>
+            <AppBar         position="static"
+                style={{ height: "80px", background: "secondary", marginLeft:"230px" }}
+                classes={{ 
+                root: classes.abRoot, 
+                positionStatic: classes.abStatic 
+                }}>
+                You are 
+            </AppBar>
             <Drawer
              variant = "permanent"
              anchor = "left"

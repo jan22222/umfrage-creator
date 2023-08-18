@@ -1,17 +1,18 @@
-import react from "react"
+import react, {useContext} from "react"
+import UserContext from "../App.js"
 
-export default function Home({user}){
+
+export default function Home(){
+    const value = useContext(UserContext);
     react.useEffect(() => {
-        console.log(user)
+        console.log(value)
 
     },[])
 
     return(
         <>
             <h1>
-                {user.email ? "You are logged in with the email" : "You are not logged in."} 
-                <p>{user.email ? user.email : ""}</p>
-
+                {value}
             </h1>
         </>
     )

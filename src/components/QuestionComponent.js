@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState, useContext } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-
 import {
   Box,
   Button,
@@ -16,15 +15,13 @@ import {
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
-
-
+import UserContext from "./Editorquestions.js"
 const states = []
 
-const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createAnswer, creatorId, surveyId, questionId}) => {
+const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, creatorId, surveyId}) => {
 
+  
   useEffect(()=>{
-    console.log("AnswerComponent")
     console.log("user", user)
     setTableData(data)
     console.log(" table data ", data)
@@ -38,7 +35,7 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
     if (values.id===""){
       
     }
-    createAnswer(values)
+    createQuestion(values)
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
@@ -46,7 +43,7 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
       tableData[row.index] = values;
       //send/receive api updates here, then refetch or update local table data for re-render
       console.log(values)
-      updateAnswer({...values});
+      updateQuestion({...values});
       exitEditingMode(); //required to exit editing mode and close modal
     }
   };
@@ -58,7 +55,7 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
   const handleDeleteRow = 
     (row) => {
     console.log("delete row")  
-    deleteAnswer(tableData[row.id].id)
+    deleteQuestion(tableData[row.id].id)
     }
 
   const getCommonEditTextFieldProps = useCallback(
@@ -103,8 +100,8 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
         size: 80,
       },
       {
-        accessorKey: 'answer',
-        header: 'Antwort',
+        accessorKey: 'text',
+        header: 'Text',
         size: 140,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
@@ -114,8 +111,6 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
 
   return (
     <> 
-      <h1>{questionText}</h1>
-
       <MaterialReactTable
         displayColumnDefOptions={{
           'mrt-row-actions': {
@@ -144,6 +139,13 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
                 <Delete />
               </IconButton>
             </Tooltip>
+            <Tooltip arrow placement="right" title="Link">
+              <IconButton color="error" >
+                <a href={"/survey/"+creatorId+"/"+surveyId+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
+              </IconButton>
+            </Tooltip>
+          
+
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
@@ -152,7 +154,7 @@ const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createA
             onClick={() => setCreateModalOpen(true)}
             variant="contained"
           >
-            Neue Antwort erstellen
+            Neue FRAGE erstellen
           </Button>
         )}
       />
@@ -183,7 +185,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
 
   return (
     <Dialog open={open}>
-      <DialogTitle textAlign="center">Neue Antwort erstellen</DialogTitle>
+      <DialogTitle textAlign="center">Neue FRAGE erstellen</DialogTitle>
       <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
@@ -211,7 +213,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
       <DialogActions sx={{ p: '1.25rem' }}>
         <Button onClick={onClose}>Abbrechen</Button>
         <Button color="secondary" onClick={handleSubmit} variant="contained">
-          Neue Antwort erstellen
+          Neue Frage erstellen
         </Button>
       </DialogActions>
     </Dialog>
