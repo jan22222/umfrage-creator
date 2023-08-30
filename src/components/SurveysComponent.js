@@ -102,46 +102,7 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
           ...getCommonEditTextFieldProps(cell),
         }),
       }])
-      // {
-      //   accessorKey: 'lastName',
-      //   header: 'Last Name',
-      //   size: 140,
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //   }),
-      // },
-      // {
-      //   accessorKey: 'email',
-      //   header: 'Email',
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //     type: 'email',
-      //   }),
-      // },
-      // {
-      //   accessorKey: 'age',
-      //   header: 'Age',
-      //   size: 80,
-      //   muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-      //     ...getCommonEditTextFieldProps(cell),
-      //     type: 'number',
-      //   }),
-      // },
-      // {
-      //   accessorKey: 'state',
-      //   header: 'State',
-      //   muiTableBodyCellEditTextFieldProps: {
-      //     select: true, //change to select for a dropdown
-      //     children: states.map((state) => (
-      //       <MenuItem key={state} value={state}>
-      //         {state}
-      //       </MenuItem>
-      //     )),
-      //   },
-      // },
-    // ],
-  //  [getCommonEditTextFieldProps],  
-  // );
+  
 
   return (
     <> 

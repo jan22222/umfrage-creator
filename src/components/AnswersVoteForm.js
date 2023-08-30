@@ -7,38 +7,32 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
-import {onSnapshot} from "firebase/firestore";
+import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
 import { db } from '../firebase'
-import {collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
-
+import {collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
+import UserContext from "./voteSurvey.js"
 
 export default function ErrorRadios(props) {
+  const [answerText, setAnswerText] = React.useState("");
   const [value, setValue] = React.useState('');
   const [error, setError] = React.useState(false);
   const [helperText, setHelperText] = React.useState('Sie können die Stimme nicht zurücknehmen, überlegen Sie gut.');
   const [answerDocRefArray, setAnswerDocRefArray] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [answerArray, setAnswerArray] = useState([])
- 
+  const user = useContext(UserContext);
   useEffect(()=>{
     
     console.log("AnswersVoteForm")
-    console.log("user", props.user)
+    console.log(user)
     console.log("props.questionText", props.questionText)
- 
-        console.log("creatorId", props.creatorId)
-        console.log("surveyId", props.surveyId)
-        console.log("qId", props.questionId)
-        console.log("props.questionDocRef", props.questionDocRef)
-        console.log("creatorId", props.creatorId)
-      console.log("surveyId", props.surveyId)
+    console.log("creatorId", props.creatorId)
+    console.log("surveyId", props.surveyId)
+    console.log("qId", props.questionId)
+    console.log("props.questionDocRef", props.questionDocRef)
+    console.log("creatorId", props.creatorId)
+    console.log("surveyId", props.surveyId)
 
-    //   const colRef = collection(db, props.creatorId)  
-    //   console.log("here 1")   
-    //   const docRef = doc(colRef, props.surveyId)
-    //   const colRef2 = collection(docRef, "questions")
-    //   console.log("here 2")   
-    //   const docRef3 = doc(colRef2, props.questionId)
       const colRef3 = collection(props.questionDocRef, "answers")
 
       function wichtig() {
@@ -81,22 +75,38 @@ export default function ErrorRadios(props) {
         .then(speichern=>{
           setAnswerDocRefArray(speichern)
           setIsLoading(false)})
+        .then(()=>{
+          setTimeout(console.log("user", user), 5000);
+        }
+        )
         
        
         
 
-  }, [])
+  }, [user, isLoading])
 
   const handleRadioChange = (event) => {
+    console.log(event.target.value)
     setValue(event.target.value);
+    const checkFunc = (item) => {
+      return item.id == event.target.value
+    }
+    const yourAnswer = answerArray.find(checkFunc)
+    const answerText = yourAnswer.answer
+    console.log(answerText)
+    setAnswerText(answerText)
     setHelperText(' ');
     setError(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    
+    console.log("submit")
+    const colRef2 = collection(props.questionDocRef, "votes")
+    console.log(colRef2)
+    console.log(props.questionId)
+    props.setVote(colRef2, props.questionId, value, answerText)
+
   };
 
   return (
@@ -109,15 +119,12 @@ export default function ErrorRadios(props) {
           value={value}
           onChange={handleRadioChange}
         >
-        {isLoading && <p>Lädt...</p>}
-        {!isLoading && answerArray.map((item, index)=>
-        (
-            <ControlUnit  user={props.user} value={item.id} control={<Radio />} label={item.answer} answerDocRef={answerDocRefArray[index]}/>
-
-          )
-
-        )}
-          
+          {isLoading && <p>Lädt...</p>}
+          {!isLoading  && answerArray.map((item, index)=>
+            (
+                <ControlUnit index={index} value={item.id} control={<Radio />} label={item.answer} answerDocRef={answerDocRefArray[index]}/>
+            )
+          )}
         </RadioGroup>
         <FormHelperText>{helperText}</FormHelperText>
         <Button sx={{ mt: 1, mr: 1, width: 100 }} type="submit" variant="outlined">
@@ -129,11 +136,7 @@ export default function ErrorRadios(props) {
 }
 
 function ControlUnit(props){
-    useEffect(()=>{
-      console.log(props.user)
-      // const colRef = collection(props.answerDocRef, "votes")
-      // addDoc(colRef,  {userId: props.user.uid, voted: true})
-    },[])
+    
     
     return(
         

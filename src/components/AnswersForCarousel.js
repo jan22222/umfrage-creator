@@ -41,13 +41,11 @@ const classes = useStyles();
                         <div><h1>{props.questionText}</h1></div>
                     </Grid>
                     <Grid item xs={8} >
-                        <AnswersVoteForm questionDocRef = {questionDocRef} surveyId={props.surveyId} creatorId = { props.creatorId } questionId = {props.questionId} questionText={questionText} />
+                        <AnswersVoteForm  setVote={props.setVote} questionDocRef = {questionDocRef} surveyId={props.surveyId} creatorId = { props.creatorId } questionId = {props.questionId} questionText={questionText} />
                     </Grid>
                     
                     </Grid>
                 </Paper>
-     
-            
         </div>
     )
 }
