@@ -19,6 +19,7 @@ export default function Editor({user}) {
   const [questionText, setQuestionText] = useState("");
   const [times, setTimes] = useState([]);
   
+  
   const createAnswer = values => {
     const colRef = collection(db, creatorId)     
     const docRef = doc(colRef, surveyId)

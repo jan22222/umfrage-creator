@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
 import { db } from '../firebase'
 import {collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
-import UserContext from "./voteSurvey.js"
+
 
 export default function ErrorRadios(props) {
   const [answerText, setAnswerText] = React.useState("");
@@ -20,11 +20,11 @@ export default function ErrorRadios(props) {
   const [answerDocRefArray, setAnswerDocRefArray] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [answerArray, setAnswerArray] = useState([])
-  const user = useContext(UserContext);
+
   useEffect(()=>{
     
     console.log("AnswersVoteForm")
-    console.log(user)
+  
     console.log("props.questionText", props.questionText)
     console.log("creatorId", props.creatorId)
     console.log("surveyId", props.surveyId)
@@ -75,15 +75,13 @@ export default function ErrorRadios(props) {
         .then(speichern=>{
           setAnswerDocRefArray(speichern)
           setIsLoading(false)})
-        .then(()=>{
-          setTimeout(console.log("user", user), 5000);
-        }
-        )
+        
+        
         
        
         
 
-  }, [user, isLoading])
+  }, [isLoading])
 
   const handleRadioChange = (event) => {
     console.log(event.target.value)
@@ -105,8 +103,8 @@ export default function ErrorRadios(props) {
     const colRef2 = collection(props.questionDocRef, "votes")
     console.log(colRef2)
     console.log(props.questionId)
-    props.setVote(colRef2, props.questionId, value, answerText)
-
+    const answerId = value
+    props.setVote(colRef2, props.questionId, answerId, answerText)
   };
 
   return (

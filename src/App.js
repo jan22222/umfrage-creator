@@ -13,6 +13,7 @@ import Editoranswers from "./components/Editoranswers"
 import Editorquestions from "./components/Editorquestions"
 import Layout from './components/Layout';
 import SurveysComponent from "./components/SurveysComponent.js"
+import Summary from "./components/Summary.js"
 import Vote from "./components/voteSurvey.js"
 import { createContext, useContext } from "react";
 
@@ -56,6 +57,7 @@ function App() {
           <Route path='/editor' element={<Editor user={user}/>} />
           <Route path='/survey/:creatorId/:surveyId' element={<Editorquestions user={user}/>} />
           <Route path='/survey/:creatorId/:surveyId/:questionId' element={<Editoranswers user={user}/>} />
+          <Route path='/summary/:creatorId/:surveyId' element={<Summary user={user}/>} />
           <Route path='/home' element={<Home  user={user}/>} />
           <Route path='/vote/:creatorId/:surveyId' element={!!user&&<Vote  user={user}/>} />
           <Route path='/signup' element={<SignUp/>} />

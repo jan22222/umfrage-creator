@@ -21,7 +21,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const states = []
 
-const Example = ({questionText, user, data,  deleteAnswer, updateAnswer, createAnswer, creatorId, surveyId, questionId}) => {
+const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAnswer, creatorId, surveyId, questionId}) => {
 
   useEffect(()=>{
     console.log("AnswerComponent")

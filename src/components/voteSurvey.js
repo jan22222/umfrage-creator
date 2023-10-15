@@ -15,9 +15,9 @@ import { QuestionAnswer } from '@mui/icons-material';
    const [questionAndAnswerArray, setQuestionAndAnswerArray] = useState([])
    const [isLoading, setIsLoading] = useState(true);
    const [questionDocRefs, setQuestionDocRefs] = useState()
-   const [abgeschickt, setAbgeschickt] = useState(true)
+   const [abgeschickt, setAbgeschickt] = useState(false)
    const [votingCompleted, setVotingCompleted] = useState(false)
-   const [abgeschicktCompletedAt, setAbgeschicktCompletedAt] = useState("")
+   const [abgeschicktCompletedAt, setAbgeschicktCompletedAt] = useState("eben gerade")
    const {creatorId, surveyId} = useParams()
    
    
@@ -28,6 +28,7 @@ import { QuestionAnswer } from '@mui/icons-material';
       console.log("user " , user)
       console.log("creatorId", creatorId)
       console.log("surveyId", surveyId)
+    
 
       const colRef = collection(db, creatorId)  
       console.log("here 1")   
@@ -64,43 +65,94 @@ import { QuestionAnswer } from '@mui/icons-material';
         
        
         setIsLoading(false)
-       })
+       }).then(()=> checkForAbgeschickt())
 
        console.log("in voteSurvey", user)
 
     }, 5000);
       
   }, [user])
-  function checkForAbgeschickt(){
-    setVotingCompleted(false)
-    const colRef = collection(db, creatorId)  
-    const docRef = doc(colRef, surveyId)
-    const colRef2 = collection(docRef, "completeVotings")
-    const docRef2 = doc(colRef2, user.uid)
-    const unsub = onSnapshot(docRef2, (doc) => {
-      setAbgeschicktCompletedAt = doc.data().completedAt;
+
+  async function checkForAbgeschickt(){
+    // damit voten/ändern nachträglich unmöglich wird
+     function wichtig() {
       
-    })
-    if (unsub.length>0) setVotingCompleted(true)
+      return new Promise((resolve, reject) => {
+
+        const colRef = collection(db, creatorId)  
+        const docRef = doc(colRef, surveyId)
+        const colRef2 = collection(docRef, "completeVotings")
+        const docRef2 = doc(colRef2, user.uid)
+        const docSnap =  getDoc(docRef2)
+        
+        resolve(docSnap)
+      
+      })
+     }
+    async function getDate(input){
+      return await new Promise((resolve, reject) => {
+
+        const datumString = input.data().completedAt.toDate().toDateString()
+        resolve(datumString)
+      })
+    }     
+    await wichtig().then(res=>getDate(res)).then(
+      res =>{
+          
+           setAbgeschicktCompletedAt(res)
+           setAbgeschickt(true)
+          }).then(()=> checkForAbgeschickt()). catch((err)=>console.log(err)
+      )
+    
   }
+
   function checkForCompletion(){
+    //damit ist das Voten gemeint, hinterlegt
+    //bei firebase unter question/votes
+    //nach abschicken wird es bei firebase unter survey/completeVotings gespeichert
       let completed = true
       questionAndAnswerArray.forEach(el=> {
        if (el.answerText == "") completed = false
       })
       setVotingCompleted(completed)
   }
-  function completion(){
+  function abschicken(){
+    //abschicken
     const colRef = collection(db, creatorId)  
     const docRef = doc(colRef, surveyId)
+    //unter surveys=>completeVotings existiert die information, welche user
+    //die survey abgeschlossen haben doc id == user id , inhalt completedAt
     const colRef2 = collection(docRef, "completeVotings")
-    setDoc(doc(colRef2, user.uid),{completedAt: serverTimestamp()})
+    
+    setDoc(doc(colRef2, user.uid),{completedAt: serverTimestamp()}).then(
+      ()=>{setAbgeschickt(true)}
+    )
+    //jetzt ist es noch erforderlich, unter der answer einen vote zu verzeichnen
+    // hierzu =>votes=> addDoc mit random id (anonym) und später können die 
+    //votes gezählt werden, questionId, answerId kommen aus questionAnswerArray
+
+    questionAndAnswerArray.forEach(item =>
+      {
+       const qId = item.questionId
+       const aId = item.answerId
+       const colRefQuestion = collection(docRef, "questions")
+       const docRefQuestion = doc(colRefQuestion, qId)
+       const colRefAnswer = collection(docRefQuestion, "answers")
+       const docRefAnswer = doc(colRefAnswer, aId)
+       const colRefVotes = collection(docRefAnswer, "votes")
+       setDoc(doc(colRefVotes, user.uid), {vote : "Vote"}).then(docRef => {
+        console.log("neues Doc für vote", colRefVotes.id); //p4eZcO5QV43IYnigxALJ
+       })
+       .catch(error => {
+            console.log(error);
+        })   
+      })
   }
   async function setVote(colRef, questionId, answerId, answerText){
 
     const warten = async ()=>{
       const docRef = doc(colRef, user.uid)
-      const check = await  getDoc(docRef)
+      const check = await getDoc(docRef)
       return check
     }
       warten().then(check=>{
@@ -109,10 +161,13 @@ import { QuestionAnswer } from '@mui/icons-material';
           //ansonsten versuchen, die antwort als docs unter votes zu adden
           const versuch = setDoc(doc(colRef,
             user.uid), { questionId, answerId, answerText })
+         
+
           .then(()=>{
             const gesIndex = questionAndAnswerArray.findIndex(el=>el.questionId == questionId)
             const el = questionAndAnswerArray[gesIndex]
             el.answerText = answerText 
+            el.answerId = answerId
             let items = [...questionAndAnswerArray];
             items[gesIndex] = el
             setQuestionAndAnswerArray([...items]) 
@@ -120,7 +175,7 @@ import { QuestionAnswer } from '@mui/icons-material';
             checkForAbgeschickt()
             if(!abgeschickt){checkForCompletion()}
             
-          })
+            })
           .catch((e)=>console.log(e))
         
         
@@ -128,16 +183,15 @@ import { QuestionAnswer } from '@mui/icons-material';
       
   }
     
-  return(<>
+  return(
+  <>
         <h1>Survey xyz Thema xxx </h1>
         <h1>
-          {votingCompleted ? <>"Alle Fragen wurden beantwortet am "+{abgeschicktCompletedAt}+"."</>:
-            "Noch fehlen Antworten."
+          {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
           } 
         </h1>
-          {votingCompleted && <button onClick={completion()}>Abschicken</button>}
           { isLoading && <p>Lädt...</p>}
-          { abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt!</h1>}
+          { abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt am : {abgeschicktCompletedAt} . </h1>}
           { !isLoading && !!user && !abgeschickt &&
             <>
               <h2>Your votes</h2>
@@ -163,7 +217,7 @@ import { QuestionAnswer } from '@mui/icons-material';
                 {
                   return(
                       <Paper key={item.id} sx={{p:5}}> 
-                        <h2 >Frage: {item.text}</h2> 
+                        <h2> Frage: {item.text}</h2> 
                         <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
                       </Paper> 
                   )
@@ -172,10 +226,7 @@ import { QuestionAnswer } from '@mui/icons-material';
               }
             </>  
           }
-          
-         
-           
-          
-          </>    )
+    </>    
+  )
 }
 
