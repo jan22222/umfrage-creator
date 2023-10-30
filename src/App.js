@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
+import LogOut from './components/logout';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import {auth} from './firebase';
@@ -61,6 +62,7 @@ function App() {
           <Route path='/home' element={<Home  user={user}/>} />
           <Route path='/vote/:creatorId/:surveyId' element={!!user&&<Vote  user={user}/>} />
           <Route path='/signup' element={<SignUp/>} />
+          <Route path='/logout' element={<LogOut/>} />
           <Route path="*" element={<NotFound/>} />
      
       </Routes>

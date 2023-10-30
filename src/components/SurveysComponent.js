@@ -141,10 +141,14 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
             </Tooltip>
             <Tooltip arrow placement="right" title="Link">
               <IconButton color="error" >
-                <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Zum Carousel</a>
+                <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Zur Abstimmung</a>
               </IconButton>
             </Tooltip>              
-
+            <Tooltip arrow placement="right" title="Link">
+              <IconButton color="error" >
+                <a href={"/summary/"+user.uid+"/"+tableData[row.id].id}>Zu den Ergebnissen</a>
+              </IconButton>
+            </Tooltip>   
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
