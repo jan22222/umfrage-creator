@@ -10,7 +10,7 @@ import AC from "./AnswersForCarousel2"
 import { QuestionAnswer } from '@mui/icons-material';
 export const UserContext = createContext(null);
 
-export default function Example({user}) {
+export default function Summary({user}) {
 const [questionArray, setQuestionArray] = useState([])
 const [questionAndAnswerArray, setQuestionAndAnswerArray] = useState([])
 const [isLoading, setIsLoading] = useState(true);
@@ -184,32 +184,15 @@ const warten = async ()=>{
 
 return(
 <>
-    <h1>Survey xyz Thema xxx </h1>
+    <h1>Übersicht der <p>Umfrage {surveyId}</p> erstellt von {creatorId} </h1>
     <h1>
       {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
       } 
     </h1>
       { isLoading && <p>Lädt...</p>}
-      { abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt am : {abgeschicktCompletedAt} . </h1>}
       { !isLoading && !!user && !abgeschickt &&
         <>
-          <h2>Your votes</h2>
-          <table >
-            <tr>
-              <th>Question</th>
-              <th>Answer</th>
-            </tr>
-        
-              {questionAndAnswerArray.map(el=>
-                <tr>
-                  <td>{el.questionText}</td>
-                  <td>{el.answerText}</td>
-                </tr>
-               )
-              }
-            
-            
-          </table>
+          
         
         {
             questionArray.map((item, index)=> 

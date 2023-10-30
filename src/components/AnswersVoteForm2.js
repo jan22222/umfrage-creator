@@ -89,14 +89,14 @@ export default function ErrorRadios(props) {
     async function ngOnInit(colRef) {
       let snapshot = await getCountFromServer(colRef);
       let count = await snapshot.data().count
-      
+      console.log("countVotesforAnswer", count)
       return count
     }
     const colRef3 = answerColRef
     const docRef3 = doc(colRef3, answerId)
     const colRef4 = await collection(docRef3, "votes")
-    await ngOnInit(colRef4).then(count=>{console.log(count); return count})
-    
+    const count = await ngOnInit(colRef4)
+    return count
 
   }
 
@@ -125,10 +125,17 @@ export default function ErrorRadios(props) {
 }
 
 function ControlUnit(props){
-  const [votes, setVotes] = useState(()=>{props.countVotesForAnswer(props.value)})
+  const [votes, setVotes] = useState(0)
 
   useEffect(()=>{
-   
+    let wert = 0
+    props.countVotesForAnswer(props.value).then(erg=>{
+      console.log("Controlunit initiiert Wert votes ist", erg )
+      wert = erg
+      setVotes(wert)
+    })
+    
+    
   },[])
     return(
         <>
