@@ -19,6 +19,7 @@ const [abgeschickt, setAbgeschickt] = useState(false)
 const [votingCompleted, setVotingCompleted] = useState(false)
 const [abgeschicktCompletedAt, setAbgeschicktCompletedAt] = useState("eben gerade")
 const {creatorId, surveyId} = useParams()
+const [title, setTitle] = useState("");
 
 
 useEffect(() => {
@@ -35,7 +36,18 @@ useEffect(() => {
   const docRef = doc(colRef, surveyId)
   const colRef2 = collection(docRef, "questions")
   console.log("here 2")   
+  
+    
+    titlesetter().then((res)=>{setTitle(res)})
 
+    async function titlesetter(){
+      console.log("TITLESETTER")
+      const doc = await getDoc(docRef)
+      const title = await doc.get("title");
+      
+      return(title)
+    }
+    
   
   function wichtig() {
   
@@ -81,6 +93,9 @@ async function checkForAbgeschickt(){
 
     const colRef = collection(db, creatorId)  
     const docRef = doc(colRef, surveyId)
+    
+   
+   
     const colRef2 = collection(docRef, "completeVotings")
     const docRef2 = doc(colRef2, user.uid)
     const docSnap =  getDoc(docRef2)
@@ -184,7 +199,8 @@ const warten = async ()=>{
 
 return(
 <>
-    <h1>Übersicht der <p>Umfrage {surveyId}</p> erstellt von {creatorId} </h1>
+    <h1>Übersicht der Umfrage:<p>Umfrage id {surveyId}, erstellt von {creatorId} </p>
+    <p>Umfragetitel: {title}</p> </h1>
     <h1>
       {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
       } 

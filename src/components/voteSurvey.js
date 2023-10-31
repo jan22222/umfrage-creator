@@ -19,6 +19,7 @@ import { QuestionAnswer } from '@mui/icons-material';
    const [votingCompleted, setVotingCompleted] = useState(false)
    const [abgeschicktCompletedAt, setAbgeschicktCompletedAt] = useState("eben gerade")
    const {creatorId, surveyId} = useParams()
+   const [title, setTitle] = useState(""); 
    
    
     useEffect(() => {
@@ -36,7 +37,15 @@ import { QuestionAnswer } from '@mui/icons-material';
       const colRef2 = collection(docRef, "questions")
       console.log("here 2")   
 
-      
+      titlesetter().then((res)=>{setTitle(res)})
+
+      async function titlesetter(){
+        console.log("TITLESETTER")
+        const doc = await getDoc(docRef)
+        const title = await doc.get("title");
+        
+        return(title)
+      }
       function wichtig() {
       
        return new Promise((resolve, reject) => {
@@ -185,7 +194,8 @@ import { QuestionAnswer } from '@mui/icons-material';
     
   return(
   <>
-        <h1>Survey xyz Thema xxx </h1>
+        <h1>Umfrage:<p>Id {surveyId}, erstellt von {creatorId} </p>
+        <p>Umfragetitel: {title}</p> </h1>
         <h1>
           {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
           } 
