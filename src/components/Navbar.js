@@ -6,6 +6,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import SubjectIcon from '@mui/icons-material/Subject';
+import ModeEdit from '@mui/icons-material/ModeEdit';
+import AppRegistration from '@mui/icons-material/AppRegistration';
+import Logout from '@mui/icons-material/Logout';
+import Login from '@mui/icons-material/Login';
+
 import {makeStyles} from "@mui/styles"
 import { useNavigate } from "react-router-dom"
 import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material/"
@@ -21,13 +26,13 @@ export default function Navbar(){
   const menuItems = [
     {
       text: "Umfragen",
-      icon: <SubjectIcon color="secondary"/>,
+      icon: <ModeEdit color="secondary"/>,
       path : "/editor"
     },
     {
       text: "Home",
       icon: <SubjectIcon color="secondary"/>,
-      path : "/home"
+      path : "/"
     },
     {
       text: "Einschreiben",
@@ -36,12 +41,12 @@ export default function Navbar(){
     },
     {
       text: "Anmelden",
-      icon: <SubjectIcon color="secondary"/>,
+      icon: <Login color="secondary"/>,
       path : "/signin"
     },
     {
       text: "Ausloggen",
-      icon: <SubjectIcon color="secondary"/>,
+      icon: <Logout color="secondary"/>,
       path : "/logout"
     },
    

@@ -1,7 +1,7 @@
 import { makeStyles} from "@mui/styles";
 import AppBar from '@mui/material/AppBar';
 import Drawer from '@mui/material/Drawer';
-import React from "react"
+import react from "react"
 import Navbar from "./Navbar.js"
 const useStyles = makeStyles({
     page:{
@@ -21,18 +21,43 @@ const useStyles = makeStyles({
    
 })
 
-export default function Layout({children}){
+export default function Layout(props){
     const classes = useStyles()
 
+
+    const userData = { uid: null};
+    const [user, setUser] = react.useState(userData)
+ 
+    react.useEffect(()=>{
+     if(props.user===undefined){
+         setUser(userData)
+     }else{
+         setUser(props.user)
+     }
+        
+    },[props.user])
+ 
+     
     return(
         <div>
-            <AppBar         position="static"
+            <AppBar    user={props.user}     position="static"
                 style={{ height: "80px", background: "secondary", marginLeft:"230px" }}
                 classes={{ 
                 root: classes.abRoot, 
                 positionStatic: classes.abStatic 
                 }}>
-                You are 
+                 <> {user.uid !== null ?
+             
+             
+             <h1>
+                 Logged in with user id {user.uid}
+             </h1>:
+             <h1>
+                 Not logged in.
+             </h1>
+            }
+         
+         </>
             </AppBar>
             <Drawer
              variant = "permanent"
@@ -43,7 +68,7 @@ export default function Layout({children}){
                <Navbar></Navbar>
             </Drawer>
             <div className = {classes.page} >
-                {children}        
+                {props.children}        
             </div>       
         </div>
     )

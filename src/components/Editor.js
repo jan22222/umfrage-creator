@@ -52,9 +52,7 @@ export default function Editor({user}) {
   return (
     <>
       <SC user={user} data = {times} createSurvey={createSurvey} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
-        <h2>
-          User-ID: {user.uid}
-        </h2>
+
     </>
   )
 }//close main

@@ -7,11 +7,7 @@ const Home = () => {
     const navigate = useNavigate();
  
     const handleLogout = () => {               
-        signOut(auth).then(() => {
-        // Sign-out successful.
-            navigate("/");
-            console.log("Signed out successfully")
-        }).catch((error) => {
+        signOut(auth).catch((error) => {
         // An error happened.
         });
     }
@@ -24,9 +20,11 @@ const Home = () => {
                 </p>
  
                 <div>
-        			<button onClick={handleLogout}>
-                        Logout
-                    </button>
+                    <form>
+                        <button onClick={handleLogout}>
+                            Logout
+                        </button>
+                    </form>
         		</div>
             </nav>
         </>

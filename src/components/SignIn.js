@@ -15,7 +15,7 @@ const Login = (props) => {
             // Signed in
             const user = userCredential.user;
             props.setUser(user)
-            navigate("/home")
+            navigate("/")
             console.log(user);
         })
         .catch((error) => {
