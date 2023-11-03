@@ -36,7 +36,7 @@ export default function Navbar(){
     },
     {
       text: "Einschreiben",
-      icon: <SubjectIcon color="secondary"/>,
+      icon: <AppRegistration color="secondary"/>,
       path : "/signup"
     },
     {
