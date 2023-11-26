@@ -50,9 +50,12 @@ export default function Editor({user}) {
   }, [user])
 
   return (
-    <>
+    <div>
+      <h1 style={{display: "block"}}>
+        Editor: Eigene Umfragen
+      </h1>
       <SC user={user} data = {times} createSurvey={createSurvey} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
 
-    </>
+    </div>
   )
 }//close main

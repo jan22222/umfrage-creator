@@ -18,17 +18,13 @@ import Summary from "./components/Summary.js"
 import Vote from "./components/voteSurvey.js"
 import { createContext, useContext } from "react";
 
-
- 
-
 function App() {
 
   const userData = { uid: null};
 
   // Setting state
   const [user, setUser] = useState(userData);
- 
-    
+
           onAuthStateChanged(auth, (user) => {
             if (user) {
               // User is signed in, see docs for a list of available properties
@@ -47,40 +43,39 @@ function App() {
     
 
   return (
-  <>   
-  <Router>
-  
-    <Layout user={user}>
-    { user.uid != null ? <>
-      <Routes>
-        
-          <Route path='/signin' element={<SignIn setUser={setUser}/>} />
-          <Route path='/:creatorId' element={<SurveysComponent />} />
-          <Route path='/editor' element={<Editor user={user}/>} />
-          <Route path='/survey/:creatorId/:surveyId' element={<Editorquestions user={user}/>} />
-          <Route path='/survey/:creatorId/:surveyId/:questionId' element={<Editoranswers user={user}/>} />
-          <Route path='/summary/:creatorId/:surveyId' element={<Summary user={user}/>} />
-          <Route path='/' element={<Home  user={user}/>} />
-          <Route path='/vote/:creatorId/:surveyId' element={!!user&&<Vote  user={user}/>} />
-          <Route path='/signup' element={<SignUp/>} />
-          <Route path='/logout' element={<LogOut/>} />
-          <Route path="*" element={<NotFound/>} />
-     
-      </Routes></>:
-      <Routes>
-        <Route path='/signin' element={<SignIn setUser={setUser}/>} />
-        <Route path='/signup' element={<SignUp/>} />
-        <Route path="*" element={<NotFound/>} />
-      </Routes>
-         }
-  
-    </Layout>
+    <>   
+    <Router>
+    
+      <Layout user={user}>
+        { user.uid != null ? <>
+          <Routes>
+              <Route path='/signin' element={<SignIn setUser={setUser} user={user}/>} />
+              <Route path='/:creatorId' element={<SurveysComponent />} />
+              <Route path='/editor' element={<Editor user={user}/>} />
+              <Route path='/survey/:creatorId/:surveyId' element={<Editorquestions user={user}/>} />
+              <Route path='/survey/:creatorId/:surveyId/:questionId' element={<Editoranswers user={user}/>} />
+              <Route path='/summary/:creatorId/:surveyId' element={<Summary user={user}/>} />
+              <Route path='/' element={<Home  user={user}/>} />
+              <Route path='/vote/:creatorId/:surveyId' element={!!user&&<Vote  user={user}/>} />
+              <Route path='/signup' element={<NotFound/>} />
+              <Route path='/logout' element={<LogOut/>} />
+              <Route path="*" element={<NotFound/>} />
+          </Routes></>:
+          <Routes>
+            <Route path='/signin' element={<SignIn setUser={setUser} user={null}/>} />
+            <Route path='/signup' element={<SignUp/>} />
+            <Route path="*" element={<NotFound/>} />
+            <Route path='/logout' element={<NotFound/>} />
+            <Route path='/' element={<NotFound/>} />
+          </Routes>
+        }
+      </Layout>
 
-  </Router>  
-  </>
+    </Router>  
+    </>
   );
 }
 function NotFound() {
-  return <>You have landed on a page that doesn't exist</>;
+  return <>Sie haben entweder einen ungültigen Pfad eingegeben oder sind nicht eingeloggt bzw. erforderlicherweise ausgeloggt.</>;
 }
 export default App;

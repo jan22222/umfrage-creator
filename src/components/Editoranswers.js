@@ -76,10 +76,6 @@ export default function Editor({user}) {
   return (
     <>
      <AC user={user} questionText ={questionText} questionId = {questionId} creatorId={creatorId} surveyId= {surveyId}  data = {times} createAnswer={createAnswer} deleteAnswer = {deleteAnswer} updateAnswer = {updateAnswer}/> 
-
-      <h2>
-        User-ID: {!user ? "Not logged in." : user.id}
-      </h2>
     </>
   )
 }//close main

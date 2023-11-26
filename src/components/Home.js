@@ -1,9 +1,7 @@
 import react from "react"
 
-
-
 export default function Home(props){
-    const userData = { uid: null};
+   const userData = { uid: null};
    const [user, setUser] = react.useState(userData)
 
    react.useEffect(()=>{

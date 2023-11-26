@@ -10,11 +10,25 @@ import ModeEdit from '@mui/icons-material/ModeEdit';
 import AppRegistration from '@mui/icons-material/AppRegistration';
 import Logout from '@mui/icons-material/Logout';
 import Login from '@mui/icons-material/Login';
-
 import {makeStyles} from "@mui/styles"
 import { useNavigate } from "react-router-dom"
 import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material/"
+import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
 
+const theme = createTheme({
+    palette:{
+      primary:{
+        main: "#1760a5",
+        light: "skyblue"
+      },
+      secondary:{
+        main: '#e6290b',
+      },
+      otherColor:{
+        main:"#999"
+      }
+    }
+  })
 
 const useStyles = makeStyles({
 
@@ -55,26 +69,24 @@ export default function Navbar(){
       cursor: "grab"
   }
   return (
-  <>
+  <ThemeProvider theme={theme}>
     <List>
       {menuItems.map((item)=>{ 
         return(
-        <ListItem
-          key={item.text}
-          onClick={()=>{navigate(item.path)}}
-        >
-          <ListItemButton  hoveredStyle={hoveredStyle}>
-
-          <ListItemIcon >
-            {item.icon}
-          </ListItemIcon>
-          <ListItemText primary={item.text} tooltip="Description here"/>
-          </ListItemButton>
-        </ListItem>)
+          <ListItem 
+            key={item.text}
+            onClick={()=>{navigate(item.path)}}
+          >
+            <ListItemButton  hoveredStyle={hoveredStyle} color="primary">
+              <ListItemIcon >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} tooltip="Description here"/>
+            </ListItemButton>
+          </ListItem>
+        )
       })}
-    
     </List>
-  
-  </>
+  </ThemeProvider>
   );
 }

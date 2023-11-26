@@ -70,12 +70,9 @@ export default function Editor(props) {
 
   return (
     <>
-    <UserContext.Provider value={user}>
-       <QC creatorId={creatorId} surveyId= {surveyId}  data = {times} createQuestion={createQuestion} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/> 
-    </UserContext.Provider>
-      <h2>
-        User-ID: {!user ? "Not logged in." : user.uid}
-      </h2>
+      <UserContext.Provider value={user}>
+        <QC creatorId={creatorId} surveyId= {surveyId}  data = {times} createQuestion={createQuestion} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/> 
+      </UserContext.Provider>
     </>
   )
 }//close main
