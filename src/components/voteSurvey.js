@@ -1,5 +1,5 @@
     import Slide from '@material-ui/core/Slide';
-    import React, { useState, useEffect, createContext } from 'react';
+    import React, { useState, useMemo, useEffect, createContext } from 'react';
     import {useParams} from "react-router-dom"
     import {CollectionReference, onSnapshot} from "firebase/firestore";
     import { serverTimestamp } from 'firebase/firestore'
@@ -7,7 +7,7 @@
     import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, query } from "firebase/firestore";
     import { CardActions, Paper } from '@mui/material';
     import AC from "./AnswersForCarousel"
-import { QuestionAnswer } from '@mui/icons-material';
+import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
     export const UserContext = createContext(null);
     
  export default function Example({user}) {
@@ -20,67 +20,99 @@ import { QuestionAnswer } from '@mui/icons-material';
    const [abgeschicktCompletedAt, setAbgeschicktCompletedAt] = useState("eben gerade")
    const {creatorId, surveyId} = useParams()
    const [title, setTitle] = useState(""); 
+   const [times, setTimes] = useState(false); 
    
+   //wenn sich email des users ändert, berechne erlaubnis neu. (in memoAuth wird die Email gespeichert,
+   //um sie mit der aktuellen user email zu vergleichen. leere email = auch kein auth)
    
-    useEffect(() => {
-      setTimeout(function () {
+  
+   useEffect(() => {
+        emailAbgleich()
+        setTimeout(function () {
+          
+            console.log("voteSurvey")
+          console.log("user " , user)
+          console.log(user.email, "useremail")
+          console.log(times, "vergleich")
+          console.log("creatorId", creatorId)
+          console.log("surveyId", surveyId)
         
-        console.log("voteSurvey")
-      console.log("user " , user)
-      console.log("creatorId", creatorId)
-      console.log("surveyId", surveyId)
     
-
-      const colRef = collection(db, creatorId)  
-      console.log("here 1")   
-      const docRef = doc(colRef, surveyId)
-      const colRef2 = collection(docRef, "questions")
-      console.log("here 2")   
-
-      titlesetter().then((res)=>{setTitle(res)})
-
-      async function titlesetter(){
-        console.log("TITLESETTER")
-        const doc = await getDoc(docRef)
-        const title = await doc.get("title");
-        
-        return(title)
-      }
-      function wichtig() {
+          const colRef = collection(db, creatorId)  
+          console.log("here 1")   
+          const docRef = doc(colRef, surveyId)
+          const colRef2 = collection(docRef, "questions")
+          console.log("here 2")   
+    
+          titlesetter().then((res)=>{setTitle(res)})
+    
+          async function titlesetter(){
+            console.log("TITLESETTER")
+            const doc = await getDoc(docRef)
+            const title = await doc.get("title");
+            
+            return(title)
+          }
+          function wichtig() {
+          
+          return new Promise((resolve, reject) => {
+    
+          const docSnap =  getDocs(colRef2);
+          resolve(docSnap)
+          
+          })
+          }
+          
+          wichtig().then(
+          res =>{
+            const help = 
+                res.docs.map(doc => ({
+                  id: doc.id,
+                  ...doc.data()
+                }))
+            if(!!help){
+              setQuestionArray(help)
+              setQuestionDocRefs(help.map(item=>doc(colRef2, item.id)))
+              setQuestionAndAnswerArray(help.map(item=>{
+                return {questionId: item.id, questionText: item.text, answerText: ""}
+              }))
+    
+            } 
+            
+          
+            setIsLoading(false)
+          }).then(()=> checkForAbgeschickt())
+    
+          console.log("in voteSurvey", user)
+    
+        }, 5000);
       
-       return new Promise((resolve, reject) => {
-
-       const docSnap =  getDocs(colRef2);
-       resolve(docSnap)
-       
-       })
-      }
       
-      wichtig().then(
-       res =>{
-        const help = 
-            res.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            }))
-        if(!!help){
-          setQuestionArray(help)
-          setQuestionDocRefs(help.map(item=>doc(colRef2, item.id)))
-          setQuestionAndAnswerArray(help.map(item=>{
-            return {questionId: item.id, questionText: item.text, answerText: ""}
-          }))
-
-        } 
-        
-       
-        setIsLoading(false)
-       }).then(()=> checkForAbgeschickt())
-
-       console.log("in voteSurvey", user)
-
-    }, 5000);
       
   }, [user])
+
+  async function loadTimes(){
+      const colRef = collection(db, creatorId)     
+      const docRef = doc(colRef, surveyId)
+      const colRef2 = collection(docRef, "permissions")
+      var newTimes = false
+      const unsubscribe = onSnapshot(colRef2, snapshot => {
+        console.log("HERERE", snapshot)
+          snapshot.docs.map(doc => {
+            if (doc.data().email === user.email){
+              newTimes = true
+              console.log("found email adress.")
+            }else{
+              console.log("not found")
+            }
+          }
+        );
+          setTimes(newTimes);
+      });
+    }
+      
+  
+  
 
   async function checkForAbgeschickt(){
     // damit voten/ändern nachträglich unmöglich wird
@@ -191,52 +223,62 @@ import { QuestionAnswer } from '@mui/icons-material';
       })
       
   }
-    
+  
+  //useMemo triggert diese Funktion
+  async function emailAbgleich(){
+    await loadTimes()
+    console.log("________________________________", times)
+    return times
+  }
+
+   
   return(
-  <>
-        <h1>Umfrage:<p>Id {surveyId}, erstellt von {creatorId} </p>
-        <p>Umfragetitel: {title}</p> </h1>
-        <h1>
-          {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
-          } 
-        </h1>
-          { isLoading && <p>Lädt...</p>}
-          { abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt am : {abgeschicktCompletedAt} . </h1>}
-          { !isLoading && !!user && !abgeschickt &&
-            <>
-              <h2>Your votes</h2>
-              <table >
-                <tr>
-                  <th>Question</th>
-                  <th>Answer</th>
-                </tr>
-            
-                  {questionAndAnswerArray.map(el=>
+    
+      <>
+            <h1>Umfrage: <p>Id {surveyId}, erstellt von {creatorId} </p>
+            <p>Umfragetitel: {title}</p> </h1>
+            {!times && <h1>Sie sind zu dieser Umfrage nicht zugelassen.</h1>}
+            <h1>
+              {times && votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
+              } 
+            </h1>
+              { times && isLoading && <p>Lädt...</p>}
+              { times && abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt am : {abgeschicktCompletedAt} . </h1>}
+              { times && !isLoading && !!user && !abgeschickt &&
+                <>
+                  <h2>Ihre Votes</h2>
+                  <table >
                     <tr>
-                      <td>{el.questionText}</td>
-                      <td>{el.answerText}</td>
+                      <th>Frage</th>
+                      <th>Antwort</th>
                     </tr>
-                   )
-                  }
                 
+                      {questionAndAnswerArray.map(el=>
+                        <tr>
+                          <td>{el.questionText}</td>
+                          <td>{el.answerText}</td>
+                        </tr>
+                      )
+                      }
+                    
+                    
+                  </table>
                 
-              </table>
-            
-            {
-                questionArray.map((item, index)=> 
                 {
-                  return(
-                      <Paper key={item.id} sx={{p:5}}> 
-                        <h2> Frage: {item.text}</h2> 
-                        <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
-                      </Paper> 
-                  )
-                }
-                )
+                    questionArray.map((item, index)=> 
+                    {
+                      return(
+                          <Paper key={item.id} sx={{p:5}}> 
+                            <h2> Frage: {item.text}</h2> 
+                            <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
+                          </Paper> 
+                      )
+                    }
+                    )
+                  }
+                </>  
               }
-            </>  
-          }
-    </>    
+        </>  
   )
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { CircularProgress } from '@mui/material';
 
 import { useState, useEffect, useMemo, createContext } from 'react';
 import {useParams} from "react-router-dom"
@@ -18,8 +18,9 @@ export default function Editor({user}) {
   // Setting state
   const [questionText, setQuestionText] = useState("");
   const [times, setTimes] = useState([]);
-  
-  
+  const [auth, setAuth] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true);
+
   const createAnswer = values => {
     const colRef = collection(db, creatorId)     
     const docRef = doc(colRef, surveyId)
@@ -49,9 +50,9 @@ export default function Editor({user}) {
   }
 
   useEffect(async () => {
-        console.log("user id" , user.uid)
-        console.log("creatorId", creatorId)
-        console.log("surveyId", surveyId)
+    
+    setAuth(user.uid === creatorId)
+    
     
       const colRef = collection(db, creatorId)     
       const docRef = doc(colRef, surveyId)
@@ -67,15 +68,26 @@ export default function Editor({user}) {
             ...doc.data()
           }));
           setTimes(newTimes2);
-          console.log(newTimes2)
+          setIsLoading(false)
         });
       console.log("times", times)  
       
   }, [])
 
   return (
-    <>
-     <AC user={user} questionText ={questionText} questionId = {questionId} creatorId={creatorId} surveyId= {surveyId}  data = {times} createAnswer={createAnswer} deleteAnswer = {deleteAnswer} updateAnswer = {updateAnswer}/> 
-    </>
+    <div style={{height: "80vh"}}> 
+      { isLoading ?
+        <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <CircularProgress />
+        </div>:
+        <>{
+          auth&&
+            <>
+              <AC user={user} questionText = {questionText} questionId = {questionId} creatorId={creatorId} surveyId= {surveyId}  data = {times} createAnswer={createAnswer} deleteAnswer = {deleteAnswer} updateAnswer = {updateAnswer}/> 
+            </>
+        }</>
+      }
+    </div>
+    
   )
 }//close main

@@ -13,6 +13,7 @@ import Home from "./components/Home"
 import Editoranswers from "./components/Editoranswers"
 import Editorquestions from "./components/Editorquestions"
 import Layout from './components/Layout';
+import Invitation from './components/Invitation';
 import SurveysComponent from "./components/SurveysComponent.js"
 import Summary from "./components/Summary.js"
 import Vote from "./components/voteSurvey.js"
@@ -53,6 +54,7 @@ function App() {
               <Route path='/:creatorId' element={<SurveysComponent />} />
               <Route path='/editor' element={<Editor user={user}/>} />
               <Route path='/survey/:creatorId/:surveyId' element={<Editorquestions user={user}/>} />
+              <Route path='/survey/:creatorId/:surveyId/invitation' element={<Invitation user={user}/>} />
               <Route path='/survey/:creatorId/:surveyId/:questionId' element={<Editoranswers user={user}/>} />
               <Route path='/summary/:creatorId/:surveyId' element={<Summary user={user}/>} />
               <Route path='/' element={<Home  user={user}/>} />

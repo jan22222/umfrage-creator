@@ -4,7 +4,7 @@ import {onSnapshot} from "firebase/firestore";
 import { db } from '../firebase'
 import {collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import SC from "./SurveysComponent"
-
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Editor({user}) {
   
@@ -14,6 +14,7 @@ export default function Editor({user}) {
 
   const [currentSurvey, setCurrentSurvey] = useState(initialFormStateSurvey);
   const [times, setTimes] = useState([]);
+  const [loading, setLoading] = useState(true)
 
   const createSurvey = values => {
      const ref = collection(db, user.uid)
@@ -29,8 +30,7 @@ export default function Editor({user}) {
     setDoc(docRef, updatedSurvey);
   }
   useEffect(() => {
-
-       console.log("user id", user.uid)
+      
       try{
         const colRef = collection(db, user.uid)
         const unsubscribe = onSnapshot(colRef, snapshot => {
@@ -40,6 +40,7 @@ export default function Editor({user}) {
             })
           );
             setTimes( newTimes);
+            setLoading(false)
         });
     
           
@@ -49,13 +50,18 @@ export default function Editor({user}) {
         }
   }, [user])
 
-  return (
-    <div>
+  return (<div style={{height: "80vh"}}> { loading ?
+  <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+    <CircularProgress />
+  </div>:
+  <>
       <h1 style={{display: "block"}}>
         Editor: Eigene Umfragen
       </h1>
       <SC user={user} data = {times} createSurvey={createSurvey} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
-
-    </div>
+  </>
+  }
+  </div>
+    
   )
 }//close main

@@ -8,7 +8,7 @@ import {onSnapshot} from "firebase/firestore";
 
 import { db } from '../firebase'
 import {collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
-
+import { CircularProgress } from '@mui/material';
 
 import QC from "./QuestionComponent"
 export const UserContext = createContext(null);
@@ -19,9 +19,10 @@ export default function Editor(props) {
   
   const [user, setUser] = useState(props.user);
   // Setting state
-
+  const [auth, setAuth] = useState(false); 
   const [times, setTimes] = useState([]);
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   const createQuestion = values => {
     const colRef = collection(db, creatorId)     
     const docRef = doc(colRef, surveyId)
@@ -45,9 +46,10 @@ export default function Editor(props) {
   }
 
   useEffect(() => {
-        console.log("user id" , user.uid)
-        console.log("creatorId", creatorId)
-        console.log("surveyId", surveyId)
+     
+   
+    setAuth(user.uid === creatorId)
+    
     try{
       const colRef = collection(db, creatorId)     
       const docRef = doc(colRef, surveyId)
@@ -59,7 +61,7 @@ export default function Editor(props) {
             ...doc.data()
           }));
           setTimes(newTimes2);
-          console.log(newTimes2)
+          setIsLoading(false)
         });
       console.log("times", times)  
         } //try block ends
@@ -69,10 +71,21 @@ export default function Editor(props) {
   }, [])
 
   return (
-    <>
-      <UserContext.Provider value={user}>
-        <QC creatorId={creatorId} surveyId= {surveyId}  data = {times} createQuestion={createQuestion} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/> 
-      </UserContext.Provider>
-    </>
+    <div style={{height: "80vh"}}> 
+      { isLoading ?
+        <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <CircularProgress />
+        </div>:
+        <>
+          {auth &&
+            <>
+              <UserContext.Provider value={user}>
+                <QC creatorId={creatorId} surveyId= {surveyId}  data = {times} createQuestion={createQuestion} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/> 
+              </UserContext.Provider>
+            </>}
+        </>
+      }
+    </div>
+    
   )
 }//close main

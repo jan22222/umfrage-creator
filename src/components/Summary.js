@@ -8,6 +8,7 @@ import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, que
 import { CardActions, Paper } from '@mui/material';
 import AC from "./AnswersForCarousel2"
 import { QuestionAnswer } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
 export const UserContext = createContext(null);
 
 export default function Summary({user}) {
@@ -20,16 +21,33 @@ const [votingCompleted, setVotingCompleted] = useState(false)
 const [abgeschicktCompletedAt, setAbgeschicktCompletedAt] = useState("eben gerade")
 const {creatorId, surveyId} = useParams()
 const [title, setTitle] = useState("");
+const [times, setTimes] = useState([]);
+const [numberPermissions, setNumberPermissions] = useState(0);
 
 
 useEffect(() => {
   setTimeout(function () {
-    
-    console.log("voteSurvey")
-  console.log("user " , user)
-  console.log("creatorId", creatorId)
-  console.log("surveyId", surveyId)
 
+    //die permissions rausladen um Anzahl zu ermitteln
+  async function loadTimes(){
+    const colRefx = collection(db, creatorId)     
+    const docRefx = doc(colRefx, surveyId)
+    const colRefx2 = collection(docRefx, "permissions")
+    const unsubscribe = await onSnapshot(colRefx2, snapshot => {
+      console.log("jet", snapshot)
+        const newTimes = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })
+      );
+        setTimes(newTimes);
+        setNumberPermissions(newTimes.length)
+    });
+    
+  }
+    
+  loadTimes()
+  
 
   const colRef = collection(db, creatorId)  
   console.log("here 1")   
@@ -198,14 +216,19 @@ const warten = async ()=>{
 }
 
 return(
-<>
+  <div style={{height: "80vh"}}> { isLoading ?
+    <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+      <CircularProgress />
+    </div>:
+    <>
     <h1>Übersicht der Umfrage:<p>Umfrage id {surveyId}, erstellt von {creatorId} </p>
     <p>Umfragetitel: {title}</p> </h1>
+    <h2> Anzahl der Abstimmungsberechtigten: {numberPermissions+ ""}</h2>
     <h1>
       {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
       } 
     </h1>
-      { isLoading && <p>Lädt...</p>}
+      
       { !isLoading && !!user && !abgeschickt &&
         <>
           
@@ -224,7 +247,8 @@ return(
           }
         </>  
       }
-</>    
+    </>
+}</div>   
 )
 }
 

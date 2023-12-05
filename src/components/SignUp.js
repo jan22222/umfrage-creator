@@ -54,7 +54,7 @@ const Signup = () => {
                     // Signed in
                     const user = userCredential.user;
                     console.log(user);
-
+                    alert("Erfolgreich eingeloggt.")
                     navigate("/signin")
                     // ...
                 })

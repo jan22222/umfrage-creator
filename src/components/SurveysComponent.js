@@ -141,12 +141,17 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
             </Tooltip>
             <Tooltip arrow placement="right" title="Link">
               <IconButton color="error" >
-                <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Zur Abstimmung</a>
+                <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Abstimmung</a>
               </IconButton>
-            </Tooltip>              
+            </Tooltip>
+            <Tooltip arrow placement="right" title="Einladen">
+              <IconButton color="error" >
+                <a href={"/survey/"+user.uid+"/"+tableData[row.id].id+"/invitation"}>Einladen</a>
+              </IconButton>
+            </Tooltip>                  
             <Tooltip arrow placement="right" title="Link">
               <IconButton color="error" >
-                <a href={"/summary/"+user.uid+"/"+tableData[row.id].id}>Zu den Ergebnissen</a>
+                <a href={"/summary/"+user.uid+"/"+tableData[row.id].id}>Ergebnisse</a>
               </IconButton>
             </Tooltip>   
           </Box>
