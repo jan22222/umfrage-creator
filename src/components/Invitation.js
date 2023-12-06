@@ -49,6 +49,11 @@ export default function Invitation(props) {
           console.log(ss)
           if(ss.empty) {
             const docRef2 = addDoc(colRef2, {email})
+            console.log("einlad"+ email)
+            const colxRef = collection(db, "Invitations " + email) 
+            console.log(colxRef) 
+            const docxRef = addDoc(colxRef, {link: "./vote/"+creatorId+"/"+surveyId}) 
+            console.log(docxRef)
             console.log("geadded")
             const serviceId = "service_59537oi";
             const templateId = "template_vof0chr";
