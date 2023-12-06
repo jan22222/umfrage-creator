@@ -243,7 +243,8 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
               } 
             </h1>
               { times && isLoading && <p>Lädt...</p>}
-              { times && abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt am : {abgeschicktCompletedAt} . </h1>}
+              { times && abgeschickt && !isLoading && <h1>Umfrage bereits abgeschickt am : {abgeschicktCompletedAt}.
+               </h1>}
               { times && !isLoading && !!user && !abgeschickt &&
                 <>
                   <h2>Ihre Votes</h2>

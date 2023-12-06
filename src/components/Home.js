@@ -12,9 +12,9 @@ export default function Home(props){
    const [invitations, setInvitations] = react.useState([])
    const [isLoading, setIsLoading] = react.useState(true);
    
-   async function loadInvitations(){
-    const colRef = collection(db, "Invitations " + user.email)     
-      const unsubscribe = await onSnapshot(colRef, snapshot => {
+   function loadInvitations(){
+    const colRef = collection(db, "Invitations " + props.user.email)     
+      const unsubscribe = onSnapshot(colRef, snapshot => {
         console.log("jet", snapshot)
           const newTimes = snapshot.docs.map(doc => ({
             id: doc.id,
@@ -24,19 +24,22 @@ export default function Home(props){
         setInvitations(newTimes);
         console.log("invitations", newTimes)
       });
+      return null
    }
 
-
-   react.useEffect(()=>{
+ function userLoad(){
     if(props.user===undefined){
         setUser(userData)
     }else{
         setUser(props.user)
     }
-       
-    loadInvitations()
+    return user
+}
+   react.useEffect(()=>{
     
-    setIsLoading(false)
+    userLoad()
+    loadInvitations()
+    setIsLoading(false) 
 
    },[props.user])
 
@@ -60,7 +63,7 @@ export default function Home(props){
                     
                 }
                 
-                {invitations && invitations.map(function(data, index) {
+                {invitations.map(function(data, index) {
                     return (
                         <div>
                             {index+1}:  <a href={data.link}>{data.link}</a>

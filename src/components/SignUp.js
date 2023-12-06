@@ -31,8 +31,10 @@ const Signup = () => {
     function ValidateEmail(input) {
         var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         if (input.match(validRegex)) {
+          
           return true;
         } else {
+          alert("Email ungültig.")
           return false;
         }
     }
@@ -41,6 +43,7 @@ const Signup = () => {
         if(input.length > 5){
             return true
         }
+        alert("Passwort ungültig.")
         return false
     }
 
@@ -54,7 +57,7 @@ const Signup = () => {
                     // Signed in
                     const user = userCredential.user;
                     console.log(user);
-                    alert("Erfolgreich eingeloggt.")
+                    alert("Erfolgreich registriert.")
                     navigate("/signin")
                     // ...
                 })
