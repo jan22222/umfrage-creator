@@ -87,6 +87,13 @@ export default function Invitation(props) {
     
   }
 
+  const löschen = (index) =>{
+    let emails2 = emails
+    const x = emails2.splice(index, 1);
+    setEmails([...emails2])
+    console.log(emails)
+  }
+
   const AddEmail = (e) => {
     e.preventDefault()
     setEmails([...emails, email])
@@ -161,6 +168,9 @@ export default function Invitation(props) {
             return (
               <div>
                 {index+1}:  {data}
+                <p>
+                  <Button onClick={()=>löschen(index)}>Löschen</Button>
+                </p>
               </div>
             )
           }): <>Keine Einträge.</>} 
@@ -172,7 +182,7 @@ export default function Invitation(props) {
         Bitte hier eintragen:
       </h1>
       <form autoComplete="off" onSubmit={AddEmail}>
-            <h2>Login Form</h2>
+            <h2>Neue Email</h2>
                 <TextField 
                     label="Email"
                     onChange={e => setEmail(e.target.value)}
