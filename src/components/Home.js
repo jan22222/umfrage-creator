@@ -66,7 +66,8 @@ export default function Home(props){
                 {invitations.map(function(data, index) {
                     return (
                         <div>
-                            {index+1}:  <a href={data.link}>{data.link}</a>
+                            <a href={data.link}>{index+1}:  {data.title}</a>
+                            <p>erstellt von {data.creatoremail}</p>
                         </div>
                     )
                     })

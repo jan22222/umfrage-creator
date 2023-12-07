@@ -11,7 +11,7 @@ import {onSnapshot} from "firebase/firestore";
 import { Box } from "@mui/material";
 
 import { db } from '../firebase'
-import {collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
+import {collection, getDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 
 import { query, where } from "firebase/firestore";
 
@@ -28,10 +28,10 @@ export default function Invitation(props) {
   const [times, setTimes] = useState();
   const [emailError, setEmailError] = useState(false)
   const [loading, setLoading] = useState(false);
-  const [link, setLink] = useState(window.location.href);
   const [sender, setSender] = useState(props.user.email);
   const [auth, setAuth] = useState(false); 
   const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("")
 
   const Abschicken = () => {
     console.log(emails)
@@ -52,19 +52,23 @@ export default function Invitation(props) {
             console.log("einlad"+ email)
             const colxRef = collection(db, "Invitations " + email) 
             console.log(colxRef) 
-            const docxRef = addDoc(colxRef, {link: "./vote/"+creatorId+"/"+surveyId}) 
+            const docxRef = addDoc(colxRef, {link: "./vote/"+creatorId+"/"+surveyId, title,
+            creatoremail: user.email}) 
             console.log(docxRef)
             console.log("geadded")
-            const serviceId = "service_59537oi";
-            const templateId = "template_vof0chr";
+            const serviceId = "service_hsd4xpj";
+            const templateId = "template_cfqqbyr";
+            console.log(email, "email")
             try {
               setLoading(true);
               async function sendEmail(){
                 await emailjs.send(serviceId, templateId, {
-                  recipient: email,
-                  link
+                  email,
+                  sender: user.email,
+                  title,
+                  link: "./vote/"+creatorId+"/"+surveyId
                  });
-                 alert("email successfully sent check inbox");
+                 alert("Per Email informiert.");
               }
               sendEmail()
             } catch (error) {
@@ -97,6 +101,15 @@ export default function Invitation(props) {
       emailjs.init("UyDRDWE8kWGKZilvk")
       const colRef = collection(db, creatorId)     
       const docRef = doc(colRef, surveyId)
+      titlesetter().then((res)=>{setTitle(res)})
+    
+          async function titlesetter(){
+            console.log("TITLESETTER")
+            const doc = await getDoc(docRef)
+            const title = await doc.get("title");
+            
+            return(title)
+          }
       const colRef2 = collection(docRef, "permissions")
       const unsubscribe = onSnapshot(colRef2, snapshot => {
         console.log("jet", snapshot)
@@ -127,7 +140,7 @@ export default function Invitation(props) {
     {auth &&
     <Box sx={{ justifyContent: "space-between", alignItems: "center", flexDirection: "column"}} >
       <h1>
-        Tragen Sie die zugelassenen Teilnehmer hier ein. (Email)
+          Tragen Sie die zugelassenen Teilnehmer hier ein. (Email)
         <p>
           Sie werden per Email informiert und erhalten die Teilnahmeberechtigung.
         </p>

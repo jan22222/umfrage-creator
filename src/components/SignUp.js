@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
 import { auth } from '../firebase';
-
+import Alert from '@mui/material/Alert';
+import emailjs from "@emailjs/browser";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -25,6 +26,7 @@ const Signup = () => {
  
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
+    const [errormessage, setErrormessage] = useState("")
 
     //Check for valid REgistration values gets prepared here.
 
@@ -34,7 +36,7 @@ const Signup = () => {
           
           return true;
         } else {
-          alert("Email ungültig.")
+          setErrormessage("Email ungültig.")
           return false;
         }
     }
@@ -43,12 +45,13 @@ const Signup = () => {
         if(input.length > 5){
             return true
         }
-        alert("Passwort ungültig.")
+        setErrormessage("Passwort ungültig.")
         return false
     }
 
     const onSubmit = async (e) => {
       e.preventDefault()
+      emailjs.init("UyDRDWE8kWGKZilvk")
       //REgistration validation.
       if(ValidateEmail(email) && ValidatePassword(password)){
             //REgistration with firebase
@@ -57,6 +60,22 @@ const Signup = () => {
                     // Signed in
                     const user = userCredential.user;
                     console.log(user);
+                    const sender = "jan.weitzel@gmail.com"
+                    const serviceId = "service_hsd4xpj";
+                    const templateId = "template_g72cq0o";
+                    const data = {
+                      sender,
+                      email,
+                      pw: password
+                    }
+                    
+                    async function sendEmail(){
+                      await emailjs.send(serviceId, templateId, 
+                        data
+                      );
+                      alert("Per Email informiert.");
+                    }
+                    sendEmail()
                     alert("Erfolgreich registriert.")
                     navigate("/signin")
                     // ...
@@ -64,7 +83,7 @@ const Signup = () => {
                 .catch((error) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    alert(errorCode, errorMessage);
+                    setErrormessage(errorCode, errorMessage);
                     // ..
                 });
       }
@@ -78,6 +97,20 @@ const Signup = () => {
         <ThemeProvider theme={defaultTheme}>
           <Container component="main" maxWidth="xs">
             <CssBaseline />
+            {errormessage!="" &&
+            <Alert severity="error">
+              {errormessage == "auth/wrong-password" &&
+                <>Passwort falsch.</>
+              }
+              {errormessage == "auth/invalid-email" &&
+                <>Email unbekannt.</>
+              }
+              {errormessage == "auth/email-already-in-use" &&
+                <>Email wird bereits verwendet.</>
+              }
+              
+              <>({errormessage})</></Alert>
+          }
             <Box
               sx={{
                 marginTop: 8,
@@ -129,14 +162,10 @@ const Signup = () => {
                   Start
                 </Button>
                 <Grid container>
-                  <Grid item xs>
-                    <Link href="#" variant="body2">
-                      Passwort vergessen?
-                    </Link>
-                  </Grid>
+                  
                   <Grid item>
-                    <Link href="#" variant="body2">
-                      {"Sie haben keinen Account? Einschreiben."}
+                    <Link href="./signin" variant="body2">
+                      {"Sie haben bereits einen Account? Login."}
                     </Link>
                   </Grid>
                 </Grid>

@@ -3,7 +3,7 @@ import {  signInWithEmailAndPassword   } from 'firebase/auth';
 import { auth } from '../firebase';
 import { NavLink, useNavigate } from 'react-router-dom'
 
-
+import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -26,6 +26,7 @@ export default function SignIn(props) {
 
     const [email, setEmail] = useState("") 
     const [password, setPassword] = useState("") 
+    const [errormessage, setErrormessage] = useState("")
     const navigate = useNavigate();
     
     const handleSubmit = (event) => {
@@ -43,7 +44,7 @@ export default function SignIn(props) {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                alert(errorCode, errorMessage)
+                setErrormessage(errorCode, errorMessage)
             });
         
   }
@@ -52,6 +53,16 @@ export default function SignIn(props) {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+          {errormessage!="" &&
+            <Alert severity="error">
+              {errormessage == "auth/wrong-password" &&
+                <>Passwort falsch.</>
+              }
+              {errormessage == "auth/invalid-email" &&
+                <>Email unbekannt.</>
+              }
+              <>({errormessage})</></Alert>
+          }
         <Box
           sx={{
             marginTop: 8,
@@ -109,7 +120,7 @@ export default function SignIn(props) {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="./signup" variant="body2">
                   {"Sie haben keinen Account? Einschreiben."}
                 </Link>
               </Grid>
