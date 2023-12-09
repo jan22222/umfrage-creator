@@ -5,8 +5,10 @@
     import { serverTimestamp } from 'firebase/firestore'
     import { db } from '../firebase'
     import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, query } from "firebase/firestore";
-    import { CardActions, Paper } from '@mui/material';
+    import { Typography, CardActions, Paper, Box } from '@mui/material';
     import AC from "./AnswersForCarousel"
+    import { styled } from '@mui/system';
+
 import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
     export const UserContext = createContext(null);
     
@@ -24,7 +26,13 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
    
    //wenn sich email des users ändert, berechne erlaubnis neu. (in memoAuth wird die Email gespeichert,
    //um sie mit der aktuellen user email zu vergleichen. leere email = auch kein auth)
-   
+   const StyledBox = styled(Box)(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flexstart",
+    alignItems: "center",
+    padding: "10px"
+}))
   
    useEffect(() => {
         emailAbgleich()
@@ -228,12 +236,14 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
     return times
   }
 
-   
+  
   return(
     
-      <>
-            <h1>Umfrage: <p>Id {surveyId}, erstellt von {creatorId} </p>
-            <p>Umfragetitel: {title}</p> </h1>
+      <StyledBox>
+             <Typography gutterBottom variant="h5" component="h5">
+              
+               Umfrage: <p>Id {surveyId}, erstellt von {creatorId} </p>
+            <p>Umfragetitel: {title}</p>
             {!times && <h1>Sie sind zu dieser Umfrage nicht zugelassen.</h1>}
             <h1>
               {times && votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
@@ -276,7 +286,8 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
                   }
                 </>  
               }
-        </>  
+            </Typography>
+        </StyledBox>  
   )
 }
 

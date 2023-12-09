@@ -5,10 +5,12 @@ import {CollectionReference, onSnapshot} from "firebase/firestore";
 import { serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, query } from "firebase/firestore";
-import { CardActions, Paper } from '@mui/material';
+import { Typography, Box, CardActions, Paper } from '@mui/material';
 import AC from "./AnswersForCarousel2"
 import { QuestionAnswer } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
+import { styled } from '@mui/system';
+
 export const UserContext = createContext(null);
 
 export default function Summary({user}) {
@@ -215,39 +217,48 @@ const warten = async ()=>{
   
 }
 
+const StyledBox = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  padding: "10px"
+}))
+
 return(
   <div style={{height: "80vh"}}> { isLoading ?
     <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
       <CircularProgress />
     </div>:
-    <>
-    <h1>Übersicht der Umfrage:<p>Umfrage id {surveyId}, erstellt von {creatorId} </p>
-    <p>Umfragetitel: {title}</p> </h1>
-    <h2> Anzahl der Abstimmungsberechtigten: {numberPermissions+ ""}</h2>
-    <h1>
-      {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
-      } 
-    </h1>
-      
-      { !isLoading && !!user && !abgeschickt &&
-        <>
-          
-        
-        {
-            questionArray.map((item, index)=> 
+    <StyledBox>
+      <Typography gutterBottom variant="h4" component="h4">
+            Übersicht <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
+          <p>Umfragetitel: {title}</p> 
+          <p>Anzahl der Abstimmungsberechtigten: {numberPermissions + ""}</p>
+          <p>
+            {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
+            } 
+          </p>
+          <p>
+            { !isLoading && !!user && !abgeschickt &&
+            <>
             {
-              return(
-                  <Paper key={item.id} sx={{p:5}}> 
-                    <h2> Frage: {item.text}</h2> 
-                    <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
-                  </Paper> 
-              )
-            }
-            )
+                questionArray.map((item, index)=> 
+                {
+                  return(
+                      <Paper key={item.id} sx={{p:5}}> 
+                        <h2> Frage: {item.text}</h2> 
+                        <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
+                      </Paper> 
+                  )
+                }
+                )
+              }
+            </>  
           }
-        </>  
-      }
-    </>
+          </p>
+      </Typography>
+    </StyledBox>
 }</div>   
 )
 }

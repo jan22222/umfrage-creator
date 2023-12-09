@@ -33,17 +33,14 @@ const classes = useStyles();
 
     return(
         <div sx={{width:"100vw"}}>
-          
                 <Paper className={classes.card2}>
-                    
                     <Grid container spacing={2}>
-                    <Grid item xs={8}>
-                        <div><h1>{props.questionText}</h1></div>
-                    </Grid>
-                    <Grid item xs={8} >
-                        <AnswersVoteForm  setVote={props.setVote} questionDocRef = {questionDocRef} surveyId={props.surveyId} creatorId = { props.creatorId } questionId = {props.questionId} questionText={questionText} />
-                    </Grid>
-                    
+                        <Grid item xs={8}>
+                            <div><h1>{props.questionText}</h1></div>
+                        </Grid>
+                        <Grid item xs={8} >
+                            <AnswersVoteForm  setVote={props.setVote} questionDocRef = {questionDocRef} surveyId={props.surveyId} creatorId = { props.creatorId } questionId = {props.questionId} questionText={questionText} />
+                        </Grid>
                     </Grid>
                 </Paper>
         </div>

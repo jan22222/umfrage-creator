@@ -44,7 +44,7 @@ export default function Home(props){
    },[props.user])
 
     return(
-        <Box>{user.uid !== null ?<>
+      <Box>{user.uid !== null ?<>
         <Typography gutterBottom variant="h2" component="h1">
                     Einladungen zu Umfragen
         </Typography>
@@ -80,7 +80,7 @@ export default function Home(props){
             <h1>
                 Not logged in.
             </h1>}
-        </Box>
+      </Box>
            
         
     

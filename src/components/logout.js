@@ -23,11 +23,9 @@ const Home = () => {
                 </p>
  
                 <div>
-                    <form>
-                       <Button type="submit" variant="contained" size="large" onClick={handleLogout}>
-                            Logout
-                       </Button>
-                    </form>
+                    <Button  variant="contained" size="large" onClick={handleLogout}>
+                        Logout
+                    </Button>
         		</div>
             </nav>
         </>
