@@ -15,27 +15,10 @@ import { useNavigate } from "react-router-dom"
 import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material/"
 import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
 
-const theme = createTheme({
-    palette:{
-      primary:{
-        main: "#1760a5",
-        light: "skyblue"
-      },
-      secondary:{
-        main: '#e6290b',
-      },
-      otherColor:{
-        main:"#999"
-      }
-    }
-  })
 
-const useStyles = makeStyles({
-
-})
 
 export default function Navbar(){
-  const classes = useStyles()
+
   const navigate = useNavigate()
   const menuItems = [
     {
@@ -69,7 +52,7 @@ export default function Navbar(){
       cursor: "grab"
   }
   return (
-  <ThemeProvider theme={theme}>
+
     <List>
       {menuItems.map((item)=>{ 
         return(
@@ -78,15 +61,15 @@ export default function Navbar(){
             onClick={()=>{navigate(item.path)}}
           >
             <ListItemButton  hoveredStyle={hoveredStyle} color="primary">
-              <ListItemIcon >
+              <ListItemIcon>
                 {item.icon}
               </ListItemIcon>
-              <ListItemText primary={item.text} tooltip="Description here"/>
+              <ListItemText sx={{display:{xs: "none", md:"block"}}} primary={item.text} tooltip={item.text}/>
             </ListItemButton>
           </ListItem>
         )
       })}
     </List>
-  </ThemeProvider>
+
   );
 }

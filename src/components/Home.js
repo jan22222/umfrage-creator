@@ -1,7 +1,7 @@
 import react from "react"
 import {onSnapshot} from "firebase/firestore";
 
-import { Box } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, Typography } from "@mui/material";
 
 import { db } from '../firebase'
 import {collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
@@ -44,17 +44,30 @@ export default function Home(props){
    },[props.user])
 
     return(
-        <> {user.uid !== null ?
-            
-            
-            <h1>
-                Logged in with user id {user.uid}
-                <p>
-                    and Email {user.email}
-                </p>
-                <p>
-                    Invitations:
-                </p>
+        <Box>{user.uid !== null ?<>
+        <Typography gutterBottom variant="h2" component="h1">
+                    Einladungen zu Umfragen
+        </Typography>
+            {invitations.map(function(data, index) {
+                return (
+                    <a href={data.link} style={{textDecoration: "none"}}>
+                        <Card>
+                            <CardActionArea>
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="h2">
+                                        {index+1}. Einladung zur Umfrage "{data.title}"
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary" component="p">
+                                        <p>Erstellt von {data.creatoremail}.</p>
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    </a>
+                )
+                })
+            } 
+                
                 {invitations.length == 0 && 
                     
                         <p>
@@ -62,22 +75,14 @@ export default function Home(props){
                         </p>
                     
                 }
-                
-                {invitations.map(function(data, index) {
-                    return (
-                        <div>
-                            <a href={data.link}>{index+1}:  {data.title}</a>
-                            <p>erstellt von {data.creatoremail}</p>
-                        </div>
-                    )
-                    })
-                } 
-            </h1>:
+            </>
+            :
             <h1>
                 Not logged in.
-            </h1>
-           }
+            </h1>}
+        </Box>
+           
         
-        </>
+    
     )
 }

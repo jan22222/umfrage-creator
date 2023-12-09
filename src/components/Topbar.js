@@ -60,12 +60,13 @@ const useStyles = makeStyles({
     
     }
 })
+
 const StyledStack = styled(Stack)(({ theme }) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    margin: " 2px 40px"
+    alignItems: "flex-start",
+    padding: "10px 20px"
 }))
 
 export default function Topbar(props){
@@ -73,7 +74,7 @@ export default function Topbar(props){
     return(
       <ThemeProvider theme={theme}>
         <Box
-            className = {classes.drawer}
+            
         >
              <AppBar    user={props.user}     position="static"
                 style={{ height: "120px", background: "secondary", width:"100vw",
@@ -82,7 +83,7 @@ export default function Topbar(props){
                     fontSize: '1.5rem',
                   },
                   [theme.breakpoints.up('md')]: {
-                    fontSize: '2.4rem',
+                    fontSize: '1.4rem',
                   },
                 }}
                 classes={{ 
@@ -90,17 +91,18 @@ export default function Topbar(props){
                     positionStatic: classes.abStatic 
                 }}>
                  <StyledStack> 
-                    <Typography    sx={{fontFamily: 'Raleway'}}>
+                    <Typography    sx={{ width: {xs: 150, md: 600}, fontFamily: 'Raleway', fontSize: {xs: "24px" , md: "52px"}}}>
                         Umfragen-Creator App
                     </Typography>
                     <>
                         {props.user.uid !== null ?
-                            <h1>
-                                Logged in with user id {props.user.uid}
-                            </h1>:
-                            <h1>
-                                Not logged in.
-                            </h1>
+                          <Typography    sx={{fontFamily: 'Raleway', fontSize: "24px"}}>
+                            <p>eingeloggt, {props.user.email}</p>
+                          </Typography>
+                              :
+                          <Typography    sx={{fontFamily: 'Raleway', fontSize:"24px"}}>
+                            <p>ausgeloggt.</p>
+                          </Typography>
                         }
                     </>
                  </StyledStack>

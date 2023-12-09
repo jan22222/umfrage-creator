@@ -94,7 +94,7 @@ const Signup = () => {
     }
  
     return (
-        <ThemeProvider theme={defaultTheme}>
+        // <ThemeProvider theme={defaultTheme}>
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             {errormessage!="" &&
@@ -173,7 +173,7 @@ const Signup = () => {
             </Box>
       
           </Container>
-        </ThemeProvider>
+        // </ThemeProvider>
       );
 }
  

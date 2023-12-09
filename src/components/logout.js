@@ -2,28 +2,31 @@ import React from 'react';
 import {  signOut } from "firebase/auth";
 import {auth} from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import {Button} from "@mui/material"
  
 const Home = () => {
     const navigate = useNavigate();
  
     const handleLogout = () => {               
-        signOut(auth).catch((error) => {
-        // An error happened.
-        });
+        signOut(auth)
+            .then((res)=>{navigate("../signin")})
+            .catch((error) => {
+                alert(error.message)
+            });
     }
    
     return(
         <>
             <nav>
                 <p>
-                    Zum Logout auf Button klicken.
+                    Zum Logout auf den Button klicken.
                 </p>
  
                 <div>
                     <form>
-                        <button onClick={handleLogout}>
+                       <Button type="submit" variant="contained" size="large" onClick={handleLogout}>
                             Logout
-                        </button>
+                       </Button>
                     </form>
         		</div>
             </nav>

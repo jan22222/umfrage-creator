@@ -12,10 +12,9 @@ import { Box } from "@mui/material";
 
 import { db } from '../firebase'
 import {collection, getDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
-
 import { query, where } from "firebase/firestore";
 
-import Add from './Add';
+
 
 
 export default function Invitation(props) {

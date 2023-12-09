@@ -7,24 +7,11 @@ import Sidebar from "./Sidebar";
 import Topbar from "./Topbar"
 import Feed from "./Feed";
 import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
-import Add from "./Add";
-export const theme = createTheme({
-    palette:{
-      primary:{
-        main: "#1760a5",
-        light: "skyblue"
-      },
-      secondary:{
-        main: '#add8e6',
-      },
-      otherColor:{
-        main:"#999"
-      }
-    }
-  })
+import {theme} from "../theme"
+
 const useStyles = makeStyles({
     page:{
-        width: "calc(100vw - 520px)",
+        width: "80vw",
         background: "#f9f9f9"
     },
     drawer:{
@@ -60,15 +47,14 @@ export default function Layout(props){
  
     return(
         <ThemeProvider theme={theme}>
-            <Box bgcolor={"background.default"} color={"text.primary"}  width={"100vw"}>
+            <Box>
                 <Topbar user={props.user} />
             </Box>
-            <Box bgcolor={"background.default"} color={"text.primary"}>
-                <Stack direction="row" spacing={2} justifyContent="flex-start">
+            <Box >
+                <Stack direction="row" >
                     <Sidebar setMode={setMode} mode={mode}/>
                     <Feed children={props.children} />
                 </Stack>
-                <Add />
             </Box>
         </ThemeProvider>
     )

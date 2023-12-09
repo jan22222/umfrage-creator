@@ -54,13 +54,10 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
             return(title)
           }
           function wichtig() {
-          
-          return new Promise((resolve, reject) => {
-    
-          const docSnap =  getDocs(colRef2);
-          resolve(docSnap)
-          
-          })
+            return new Promise((resolve, reject) => {
+              const docSnap =  getDocs(colRef2);
+              resolve(docSnap)
+            })
           }
           
           wichtig().then(

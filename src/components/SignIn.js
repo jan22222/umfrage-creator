@@ -50,7 +50,7 @@ export default function SignIn(props) {
   }
   
   return (
-    <ThemeProvider theme={defaultTheme}>
+    // <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
           {errormessage!="" &&
@@ -66,7 +66,7 @@ export default function SignIn(props) {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
+            display:"flex",
             flexDirection: 'column',
             alignItems: 'center',
           }}
@@ -77,7 +77,7 @@ export default function SignIn(props) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
               margin="normal"
               required
@@ -129,7 +129,7 @@ export default function SignIn(props) {
         </Box>
   
       </Container>
-    </ThemeProvider>
+    // </ThemeProvider>
   );
 }
 // const Login = (props) => {
