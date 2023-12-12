@@ -97,11 +97,11 @@ export default function Topbar(props){
                     <>
                         {props.user.uid !== null ?
                           <Typography    sx={{fontFamily: 'Raleway', fontSize: "24px"}}>
-                            <p>eingeloggt, {props.user.email}</p>
+                            <p>{props.user.email}</p>
                           </Typography>
                               :
                           <Typography    sx={{fontFamily: 'Raleway', fontSize:"24px"}}>
-                            <p>ausgeloggt.</p>
+                            <p>Ausgeloggt.</p>
                           </Typography>
                         }
                     </>

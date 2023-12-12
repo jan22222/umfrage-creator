@@ -149,10 +149,6 @@ const Signup = () => {
                   onChange={e=>setPassword(e.target.value)}
     
                 />
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Erinnern."
-                />
                 <Button
                   type="submit"
                   fullWidth

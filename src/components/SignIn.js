@@ -101,10 +101,6 @@ export default function SignIn(props) {
               onChange={e=>setPassword(e.target.value)}
 
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Erinnern."
-            />
             <Button
               type="submit"
               fullWidth
@@ -114,11 +110,6 @@ export default function SignIn(props) {
               Anmelden
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Passwort vergessen?
-                </Link>
-              </Grid>
               <Grid item>
                 <Link href="./signup" variant="body2">
                   {"Sie haben keinen Account? Einschreiben."}
