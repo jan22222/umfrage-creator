@@ -10,7 +10,10 @@ import Button from '@mui/material/Button';
 import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
 import { db } from '../firebase'
 import {getCountFromServer, collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
-
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 export default function ErrorRadios(props) {
   const [answerText, setAnswerText] = React.useState("");
@@ -101,32 +104,19 @@ export default function ErrorRadios(props) {
   }
 
   return (
-    <form>
-      <FormControl  error={error} variant="standard">
-        <FormLabel id="demo-error-radios">{props.questionText}</FormLabel>
-        <RadioGroup
-          aria-labelledby="demo-error-radios"
-          name="quiz"
-          value={value}
-          onChange={handleRadioChange}
-        >
-          {isLoading && <p>Lädt...</p>}
-          {!isLoading  && answerArray.map((item, index)=>
-            (
-                <ControlUnit countVotesForAnswer={countVotesForAnswer} index={index} value={item.id} control={<Radio />} label={item.answer} answerDocRef={answerDocRefArray[index]}/>
-            )
-          )}
-        </RadioGroup>
-        <FormHelperText>{helperText}</FormHelperText>
-
-      </FormControl>
-    </form>
+    <>
+       {isLoading && <p>Lädt...</p>}
+            {!isLoading  && answerArray.map((item, index)=>
+              (
+                  <ControlUnit countVotesForAnswer={countVotesForAnswer} index={index} value={item.id} control={<Radio />} label={item.answer} answerDocRef={answerDocRefArray[index]}/>
+              )
+            )}
+    </>
   );
 }
 
 function ControlUnit(props){
   const [votes, setVotes] = useState(0)
-
   useEffect(()=>{
     let wert = 0
     props.countVotesForAnswer(props.value).then(erg=>{
@@ -134,13 +124,18 @@ function ControlUnit(props){
       wert = erg
       setVotes(wert)
     })
-    
-    
   },[])
     return(
         <>
-        <FormControlLabel value={props.value} control={props.control} label={props.label} answerDocRef={props.answerDocRef}/>
-        <h2>Stimmen: {votes}</h2>
+          <Typography sx={{ mb: 1.5 }} >
+             Antwort {props.index+1}:
+          </Typography>
+          <Typography variant="h3" component="div">
+            {props.label}
+          </Typography>
+          <Typography sx={{ mb: 1.5 }}>
+            Stimmen: {votes}
+          </Typography>
         </>
     )
 }

@@ -222,7 +222,8 @@ const StyledBox = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "flex-start",
-  padding: "10px"
+  padding: "10px",
+  width: "100%"
 }))
 
 return(
@@ -231,9 +232,12 @@ return(
       <CircularProgress />
     </div>:
     <StyledBox>
-      <Typography gutterBottom variant="h4" component="h4">
-            Übersicht <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
-          <p>Umfragetitel: {title}</p> 
+      <Typography gutterBottom variant="h6" component="h1">
+            Übersicht 
+            <p>Umfragetitel: {title}</p> 
+            <h8>
+              <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
+            </h8>
           <p>Anzahl der Abstimmungsberechtigten: {numberPermissions + ""}</p>
           <p>
             {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
@@ -246,10 +250,9 @@ return(
                 questionArray.map((item, index)=> 
                 {
                   return(
-                      <Paper key={item.id} sx={{p:5}}> 
-                        <h2> Frage: {item.text}</h2> 
-                        <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
-                      </Paper> 
+                      <div key={item.id} sx={{p:5, width:"100%"}}> 
+                        <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId} questionText={item.text}></AC> 
+                      </div> 
                   )
                 }
                 )

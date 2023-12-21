@@ -50,7 +50,7 @@ export default function Layout(props){
             <Box>
                 <Topbar user={props.user} />
             </Box>
-            <Box >
+            <Box>
                 <Stack direction="row" >
                     <Sidebar setMode={setMode} mode={mode}/>
                     <Feed children={props.children} />
