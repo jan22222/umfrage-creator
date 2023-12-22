@@ -5,7 +5,16 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import AnswersVoteForm from "./AnswersVoteForm2"
+import { red } from '@mui/material/colors';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+const theme = createTheme({
+    palette: {
+      primary: {
+        main: red[500],
+      },
+    },
+  });
 
 export default function AnswersForCarousel(props){
 
@@ -28,18 +37,16 @@ export default function AnswersForCarousel(props){
 
 const classes = useStyles(); 
 
-    return(
-                            <Box
-                                sx={{width: "100%", display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-                            >
+    return(<ThemeProvider theme={theme}>
+                            
                                 <Card>
                                     <CardContent>
-                                        <Typography sx={{ fontSize: 42 }} color="text.secondary" gutterBottom>
+                                        <Typography sx={{ fontSize: 42 }} color="text.primary" gutterBottom>
                                             Frage: {props.questionText}
                                         </Typography>
                                         <AnswersVoteForm  setVote={props.setVote} questionDocRef = {questionDocRef} surveyId={props.surveyId} creatorId = { props.creatorId } questionId = {props.questionId} questionText={props.questionText} />
                                     </CardContent>
                                 </Card>
-                            </Box>
-    )
+                          
+            </ThemeProvider>)
 }

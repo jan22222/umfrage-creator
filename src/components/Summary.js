@@ -220,14 +220,17 @@ const warten = async ()=>{
 const StyledBox = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
+  justifyContent: "flex-start",
+  alignItems: "center",
   padding: "10px",
-  width: "100%"
+  width: "100%",
+  backgroundColor: "#E5FFED",
+  
 }))
 
 return(
-  <div style={{height: "80vh"}}> { isLoading ?
+  <Box
+  > { isLoading ?
     <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
       <CircularProgress />
     </div>:
@@ -235,34 +238,33 @@ return(
       <Typography gutterBottom variant="h6" component="h1">
             Übersicht 
             <p>Umfragetitel: {title}</p> 
-            <h8>
-              <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
-            </h8>
-          <p>Anzahl der Abstimmungsberechtigten: {numberPermissions + ""}</p>
+            <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
+            <p>Anzahl der Abstimmungsberechtigten: {numberPermissions + ""}</p>
           <p>
             {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
             } 
           </p>
+      </Typography>
           <p>
             { !isLoading && !!user && !abgeschickt &&
-            <>
-            {
+            <Box sx={{display: "flex", flexDirection: "column", gap: "10px"}}>
+              {
                 questionArray.map((item, index)=> 
                 {
                   return(
-                      <div key={item.id} sx={{p:5, width:"100%"}}> 
-                        <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId} questionText={item.text}></AC> 
-                      </div> 
+                    
+                        <AC key={item.id} setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId} questionText={item.text}></AC> 
+                    
                   )
                 }
                 )
               }
-            </>  
+            </Box>  
           }
           </p>
-      </Typography>
+      
     </StyledBox>
-}</div>   
+}</Box>  
 )
 }
 
