@@ -17,6 +17,7 @@ import Invitation from './components/Invitation';
 import SurveysComponent from "./components/SurveysComponent.js"
 import Summary from "./components/Summary.js"
 import Vote from "./components/voteSurvey.js"
+import ForgotPw from "./components/ForgotPw"
 import { createContext, useContext } from "react";
 
 function App() {
@@ -50,7 +51,6 @@ function App() {
       <Layout user={user}>
         { user.uid != null ? <>
           <Routes>
-              <Route path='/signin' element={<SignIn setUser={setUser} user={user}/>} />
               <Route path='/:creatorId' element={<SurveysComponent />} />
               <Route path='/editor' element={<Editor user={user}/>} />
               <Route path='/survey/:creatorId/:surveyId' element={<Editorquestions user={user}/>} />
@@ -64,10 +64,11 @@ function App() {
               <Route path="*" element={<NotFound/>} />
           </Routes></>:
           <Routes>
-            <Route path='/signin' element={<SignIn setUser={setUser} user={null}/>} />
+            <Route path='/signin/message?' element={<SignIn setUser={setUser} user={null}/>} />
             <Route path='/signup' element={<SignUp/>} />
             <Route path="*" element={<NotFound/>} />
             <Route path='/logout' element={<NotFound/>} />
+            <Route path='/forgot-pw' element={<ForgotPw/>} />
             <Route path='/' element={<NotFound/>} />
           </Routes>
         }

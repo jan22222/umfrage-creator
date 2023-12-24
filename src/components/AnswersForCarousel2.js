@@ -38,7 +38,6 @@ export default function AnswersForCarousel(props){
 const classes = useStyles(); 
 
     return(<ThemeProvider theme={theme}>
-                            
                                 <Card>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 42 }} color="text.primary" gutterBottom>
@@ -47,6 +46,5 @@ const classes = useStyles();
                                         <AnswersVoteForm  setVote={props.setVote} questionDocRef = {questionDocRef} surveyId={props.surveyId} creatorId = { props.creatorId } questionId = {props.questionId} questionText={props.questionText} />
                                     </CardContent>
                                 </Card>
-                          
             </ThemeProvider>)
 }

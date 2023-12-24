@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {  signInWithEmailAndPassword   } from 'firebase/auth';
 import { auth } from '../firebase';
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useParams } from 'react-router-dom'
 
 import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
@@ -28,7 +28,8 @@ export default function SignIn(props) {
     const [password, setPassword] = useState("") 
     const [errormessage, setErrormessage] = useState("")
     const navigate = useNavigate();
-    
+    const { message } = useParams();
+
     const handleSubmit = (event) => {
      event.preventDefault();
 
@@ -50,19 +51,21 @@ export default function SignIn(props) {
   }
   
   return (
-    // <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-          {errormessage!="" &&
-            <Alert severity="error">
-              {errormessage == "auth/wrong-password" &&
-                <>Passwort falsch.</>
-              }
-              {errormessage == "auth/invalid-email" &&
-                <>Email unbekannt.</>
-              }
-              <>({errormessage})</></Alert>
-          }
+            {message!= undefined && <Alert severity="info">
+              {message}
+            </Alert>}
+            {errormessage!="" &&
+              <Alert severity="error">
+                {errormessage == "auth/wrong-password" &&
+                  <>Passwort falsch.</>
+                }
+                {errormessage == "auth/invalid-email" &&
+                  <>Email unbekannt.</>
+                }
+                <>({errormessage})</></Alert>
+            }
         <Box
           sx={{
             marginTop: 8,
@@ -109,10 +112,15 @@ export default function SignIn(props) {
             >
               Anmelden
             </Button>
-            <Grid container>
+            <Grid container justifyContent="space-between">
               <Grid item>
-                <Link href="./signup" variant="body2">
-                  {"Sie haben keinen Account? Einschreiben."}
+                <Link href="../signup" variant="body2">
+                  {"Neu einschreiben."}
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="../forgot-pw" variant="body2">
+                  {"Passwort vergessen?"}
                 </Link>
               </Grid>
             </Grid>
@@ -120,73 +128,5 @@ export default function SignIn(props) {
         </Box>
   
       </Container>
-    // </ThemeProvider>
   );
 }
-// const Login = (props) => {
-//     
-//     const [email, setEmail] = useState('');
-//     const [password, setPassword] = useState('');
-       
-   
- 
-//     return(
-//         <>
-//             <main >        
-//                 <section>
-//                     <div>                                            
-//                         <p> FocusApp </p>                       
-                                                       
-//                         <form>                                              
-//                             <div>
-//                                 <label htmlFor="email-address">
-//                                     Email address
-//                                 </label>
-//                                 <input
-//                                     id="email-address"
-//                                     name="email"
-//                                     type="email"                                    
-//                                     required                                                                                
-//                                     placeholder="Email address"
-//                                     onChange={(e)=>setEmail(e.target.value)}
-//                                 />
-//                             </div>
-
-//                             <div>
-//                                 <label htmlFor="password">
-//                                     Password
-//                                 </label>
-//                                 <input
-//                                     id="password"
-//                                     name="password"
-//                                     type="password"                                    
-//                                     required                                                                                
-//                                     placeholder="Password"
-//                                     onChange={(e)=>setPassword(e.target.value)}
-//                                 />
-//                             </div>
-                                                
-//                             <div>
-//                                 <button                                    
-//                                     onClick={onLogin}                                        
-//                                 >      
-//                                     Login                                                                  
-//                                 </button>
-//                             </div>                               
-//                         </form>
-                       
-//                         <p className="text-sm text-white text-center">
-//                             No account yet? {' '}
-//                             <NavLink to="/signup">
-//                                 Sign up
-//                             </NavLink>
-//                         </p>
-                                                   
-//                     </div>
-//                 </section>
-//             </main>
-//         </>
-//     )
-// }
- 
-// export default Login
