@@ -12,6 +12,7 @@ import {
   Stack,
   TextField,
   Tooltip,
+  Typography
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -27,9 +28,6 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   const handleCreateNewRow = (values) => {
-    if (values.id===""){
-      
-    }
     createSurvey(values)
   };
 
@@ -92,7 +90,7 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
         enableColumnOrdering: false,
         enableEditing: false, //disable editing on this column
         enableSorting: false,
-        size: 80,
+        size: {xs: 0, md: 0, xl: 80},
       },
       {
         accessorKey: 'title',
@@ -124,33 +122,33 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
         onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem' }}>
-            <Tooltip arrow placement="left" title="Edit">
+            <Tooltip arrow placement="left" title="Editieren">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Delete">
+            <Tooltip arrow placement="right" title="Löschen">
               <IconButton color="error" onClick={() => handleDeleteRow(row)}>
                 <Delete />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Link">
+            <Tooltip arrow placement="right" title="ansehen">
               <IconButton color="error" >
                 <a href={"/survey/"+user.uid+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Link">
-              <IconButton color="error" >
+            <Tooltip arrow placement="right" title="Abstimmung">
+              <IconButton color="error"display={{xs:"none", md: "block"}}>
                 <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Abstimmung</a>
               </IconButton>
             </Tooltip>
             <Tooltip arrow placement="right" title="Einladen">
-              <IconButton color="error" >
+              <IconButton color="error" display={{xs:"none", md: "block"}}>
                 <a href={"/survey/"+user.uid+"/"+tableData[row.id].id+"/invitation"}>Einladen</a>
               </IconButton>
             </Tooltip>                  
-            <Tooltip arrow placement="right" title="Link">
-              <IconButton color="error" >
+            <Tooltip arrow placement="right" title="Ergebnisse">
+              <IconButton color="error" display={{xs:"none", md: "block"}}>
                 <a href={"/summary/"+user.uid+"/"+tableData[row.id].id}>Ergebnisse</a>
               </IconButton>
             </Tooltip>   

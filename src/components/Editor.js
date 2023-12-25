@@ -1,17 +1,14 @@
 import React from 'react';
 import { useState, useEffect, useContext } from 'react';
-import {onSnapshot} from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { db } from '../firebase'
-import {collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import SC from "./SurveysComponent"
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Editor({user}) {
   
   const initialFormStateSurvey = { id: null, title: "" };
-
-  // Setting state
-
   const [currentSurvey, setCurrentSurvey] = useState(initialFormStateSurvey);
   const [times, setTimes] = useState([]);
   const [loading, setLoading] = useState(true)
@@ -30,7 +27,6 @@ export default function Editor({user}) {
     setDoc(docRef, updatedSurvey);
   }
   useEffect(() => {
-      
       try{
         const colRef = collection(db, user.uid)
         const unsubscribe = onSnapshot(colRef, snapshot => {
@@ -42,26 +38,24 @@ export default function Editor({user}) {
             setTimes( newTimes);
             setLoading(false)
         });
-    
-          
-      } //try block ends
-        catch{
-              console.log("no survey")
-        }
+      }catch{
+          console.log("no survey")
+      }
   }, [user])
 
-  return (<div style={{height: "80vh"}}> { loading ?
-  <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
-    <CircularProgress />
-  </div>:
-  <>
-      <h1 style={{display: "block"}}>
-        Editor: Eigene Umfragen
-      </h1>
-      <SC user={user} data = {times} createSurvey={createSurvey} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
-  </>
-  }
-  </div>
-    
+  return (
+    <div style={{height: "80vh"}}> 
+      { loading ?
+        <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <CircularProgress />
+        </div>:
+        <>
+            <h1 style={{display: "block"}}>
+              Eigene Umfragen
+            </h1>
+            <SC user={user} data = {times} createSurvey={createSurvey} deleteSurvey = {deleteSurvey} updateSurvey = {updateSurvey}/> 
+        </>
+      }
+    </div>
   )
 }//close main
