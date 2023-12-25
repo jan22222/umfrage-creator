@@ -6,8 +6,8 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar"
 import Feed from "./Feed";
-import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
-import {theme} from "../theme"
+import { Box, Stack, Paper} from "@mui/material";
+import { ThemeProvider, createTheme} from '@mui/material/styles';
 
 const useStyles = makeStyles({
     page:{
@@ -46,16 +46,18 @@ export default function Layout(props){
     },[props.user])
  
     return(
-        <ThemeProvider theme={theme}>
-            <Box>
-                <Topbar user={props.user} />
-            </Box>
-            <Box>
-                <Stack direction="row" >
-                    <Sidebar setMode={setMode} mode={mode}/>
-                    <Feed children={props.children} />
-                </Stack>
-            </Box>
+        <ThemeProvider theme={darkTheme}>
+            <Paper sx={{height:"100vh", width:"100vw"}}>
+                <Box>
+                    <Topbar user={props.user} setMode={setMode} mode={mode}/>
+                </Box>
+                <Box>
+                    <Stack direction="row" >
+                        <Sidebar />
+                        <Feed children={props.children} />
+                    </Stack>
+                </Box>
+            </Paper>
         </ThemeProvider>
     )
 }

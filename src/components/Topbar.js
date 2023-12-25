@@ -1,45 +1,10 @@
 import react from "react"
 import NavList from "./NavList";
 import Box from '@mui/material/Box';
-import {AppBar, Stack, Typography} from '@mui/material';
+import {AppBar, Switch, Stack, Typography} from '@mui/material';
 import {makeStyles} from "@mui/styles";
 import {styled} from "@mui/material/styles"
-import {ThemeProvider, createTheme} from "@mui/material/styles"
-import RalewayWoff2 from '../fonts/Raleway-Regular.woff2';
-
-const theme = createTheme({
-    typography: {
-        fontFamily: 'Raleway, Arial',
-      },
-      components: {
-        MuiCssBaseline: {
-          styleOverrides: `
-            @font-face {
-              font-family: 'Raleway';
-              font-style: normal;
-              font-display: swap;
-              font-weight: 400;
-              src: local('Raleway'), local('Raleway-Regular'), url(${RalewayWoff2}) format('woff2');
-              unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
-            }
-          `,
-        },
-      },
-    palette:{
-      primary:{
-        main: "#1760a5",
-        light: "skyblue"
-      },
-      secondary:{
-        main: '#add8e6',
-      },
-      otherColor:{
-        main:"#999"
-      }
-    }
-  })
-
-
+import Brightness6Icon from '@mui/icons-material/Brightness6';
 
 const useStyles = makeStyles({
     page:{
@@ -65,26 +30,36 @@ const StyledStack = styled(Stack)(({ theme }) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     padding: "10px 20px"
 }))
 
 export default function Topbar(props){
     const classes = useStyles()
+    const [checked,setChecked] = react.useState(false)
+
+    function handleChange(){
+      
+      if (props.mode === "dark"){
+        props.setMode("light")
+       
+        console.log("light")
+      }else{
+        props.setMode("dark")
+        console.log("dark")
+      }
+      setChecked(!checked)
+    }
+
     return(
-      <ThemeProvider theme={theme}>
+    
         <Box
             
         >
              <AppBar    user={props.user}     position="static"
                 style={{ height: "120px", background: "secondary", width:"100vw",
                   fontSize: '1.2rem',
-                  '@media (min-width:600px)': {
-                    fontSize: '1.5rem',
-                  },
-                  [theme.breakpoints.up('md')]: {
-                    fontSize: '1.4rem',
-                  },
+                  
                 }}
                 classes={{ 
                     root: classes.abRoot, 
@@ -105,9 +80,18 @@ export default function Topbar(props){
                           </Typography>
                         }
                     </>
+                    <StyledStack>
+                      <Brightness6Icon/>
+                      <Switch
+                        color="warning"
+                        checked={checked}
+                        onChange={handleChange}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    </StyledStack>
                  </StyledStack>
              </AppBar>
         </Box>
-      </ThemeProvider>
+  
     )
 }

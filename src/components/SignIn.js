@@ -126,7 +126,6 @@ export default function SignIn(props) {
             </Grid>
           </Box>
         </Box>
-  
       </Container>
   );
 }

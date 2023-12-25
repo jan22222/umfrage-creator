@@ -262,7 +262,6 @@ return(
             </Box>  
           }
           </p>
-      
     </StyledBox>
 }</Box>  
 )
