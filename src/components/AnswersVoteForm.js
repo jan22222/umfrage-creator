@@ -6,7 +6,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
-import Button from '@mui/material/Button';
+import  {Button, Card} from '@mui/material';
 import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
 import { db } from '../firebase'
 import {collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
@@ -16,7 +16,7 @@ export default function ErrorRadios(props) {
   const [answerText, setAnswerText] = React.useState("");
   const [value, setValue] = React.useState('');
   const [error, setError] = React.useState(false);
-  const [helperText, setHelperText] = React.useState('Sie können die Stimme nicht zurücknehmen, überlegen Sie gut.');
+  const [helperText, setHelperText] = React.useState('Sie können die Stimme korrigieren, solange nicht alle Fragen beantwortet wurden. Bei Vollständigkeit wird das Formular abgeschickt.');
   const [answerDocRefArray, setAnswerDocRefArray] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [answerArray, setAnswerArray] = useState([])
@@ -76,11 +76,6 @@ export default function ErrorRadios(props) {
           setAnswerDocRefArray(speichern)
           setIsLoading(false)})
         
-        
-        
-       
-        
-
   }, [isLoading])
 
   const handleRadioChange = (event) => {
@@ -108,11 +103,12 @@ export default function ErrorRadios(props) {
   };
 
   return (
+    <Card variant="outlined" sx={{p:3}}>
     <form onSubmit={handleSubmit}>
       <FormControl  error={error} variant="standard">
-        <FormLabel id="demo-error-radios">{props.questionText}</FormLabel>
-        <RadioGroup
-          aria-labelledby="demo-error-radios"
+        <FormLabel id="label1">Frage: {props.questionText}</FormLabel>
+        <RadioGroup sx={{m:3}}
+          aria-labelledby="label1"
           name="quiz"
           value={value}
           onChange={handleRadioChange}
@@ -125,20 +121,17 @@ export default function ErrorRadios(props) {
           )}
         </RadioGroup>
         <FormHelperText>{helperText}</FormHelperText>
-        <Button sx={{ mt: 1, mr: 1, width: 100 }} type="submit" variant="outlined">
+        <Button sx={{ mt: 3, mr: 1, width: 100 }} type="submit" variant="contained">
             Stimmen
         </Button>
       </FormControl>
     </form>
+    </Card>
   );
 }
 
 function ControlUnit(props){
-    
-    
     return(
-        
-        <FormControlLabel value={props.value} control={props.control} label={props.label} answerDocRef={props.answerDocRef}/>
-            
+        <FormControlLabel value={props.value} control={props.control} label={props.label} answerDocRef={props.answerDocRef}/>     
     )
 }

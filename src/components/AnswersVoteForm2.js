@@ -127,10 +127,10 @@ function ControlUnit(props){
   },[])
     return(
         <>
-          <Typography sx={{ mb: 1.5 }} >
+          <Typography>
              Antwort {props.index+1}:
           </Typography>
-          <Typography variant="h3" component="div">
+          <Typography variant="h6" component="div">
             {props.label}
           </Typography>
           <Typography sx={{ mb: 1.5 }}>

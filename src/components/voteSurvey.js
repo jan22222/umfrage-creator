@@ -5,11 +5,12 @@
     import { serverTimestamp } from 'firebase/firestore'
     import { db } from '../firebase'
     import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, query } from "firebase/firestore";
-    import { Typography, CardActions, Paper, Box } from '@mui/material';
+    import { Typography, CardActions, Paper, Box, Card } from '@mui/material';
     import AC from "./AnswersForCarousel"
     import { styled } from '@mui/system';
 
 import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
+
     export const UserContext = createContext(null);
     
  export default function Example({user}) {
@@ -240,10 +241,13 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
   return(
     
       <StyledBox>
-             <Typography gutterBottom variant="h5" component="h5">
+        <Card>
+            <Typography gutterBottom variant="h5" component="h5">
               
                Umfrage: <p>Id {surveyId}, erstellt von {creatorId} </p>
             <p>Umfragetitel: {title}</p>
+            </Typography>
+        </Card>
             {!times && <h1>Sie sind zu dieser Umfrage nicht zugelassen.</h1>}
             <h1>
               {times && votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
@@ -254,13 +258,15 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
                </h1>}
               { times && !isLoading && !!user && !abgeschickt &&
                 <>
+                <Card>
+                <Typography gutterBottom variant="h5" component="h5">
                   <h2>Ihre Votes</h2>
                   <table >
                     <tr>
                       <th>Frage</th>
                       <th>Antwort</th>
                     </tr>
-                
+                  
                       {questionAndAnswerArray.map(el=>
                         <tr>
                           <td>{el.questionText}</td>
@@ -268,25 +274,23 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
                         </tr>
                       )
                       }
-                    
-                    
                   </table>
-                
+                  </Typography>
+                  </Card>
                 {
                     questionArray.map((item, index)=> 
                     {
                       return(
-                          <Paper key={item.id} sx={{p:5}}> 
-                            <h2> Frage: {item.text}</h2> 
-                            <AC  setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId}> questionText={item.text}</AC> 
-                          </Paper> 
+                        
+                            <AC key={item.id} setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId} questionText={item.text}></AC> 
+                          
                       )
                     }
                     )
                   }
                 </>  
               }
-            </Typography>
+            
         </StyledBox>  
   )
 }

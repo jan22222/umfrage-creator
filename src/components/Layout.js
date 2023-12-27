@@ -47,7 +47,7 @@ export default function Layout(props){
  
     return(
         <ThemeProvider theme={darkTheme}>
-            <Paper sx={{height:"100vh", width:"100vw"}}>
+            <Paper sx={{height: "auto", minHeight:"100vh", width:"100vw"}}>
                 <Box>
                     <Topbar user={props.user} setMode={setMode} mode={mode}/>
                 </Box>

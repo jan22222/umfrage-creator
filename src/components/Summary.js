@@ -5,7 +5,7 @@ import {CollectionReference, onSnapshot} from "firebase/firestore";
 import { serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, query } from "firebase/firestore";
-import { Typography, Box, CardActions, Paper } from '@mui/material';
+import { Typography, Box, CardActions, Paper, Stack } from '@mui/material';
 import AC from "./AnswersForCarousel2"
 import { QuestionAnswer } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
@@ -223,47 +223,37 @@ const StyledBox = styled(Box)(({ theme }) => ({
   justifyContent: "flex-start",
   alignItems: "center",
   padding: "10px",
-  width: "100%",
-  backgroundColor: "#E5FFED",
+  width: "100%"
   
 }))
 
 return(
-  <Box
-  > { isLoading ?
-    <div style={{height: "50%", width:"50px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+  <Stack sx={{width: "100%", m: 8, flexFlow:"row wrap"}}
+  > { isLoading ? (<div style={{height: "50vh", width:"50vw", display: "flex", justifyContent: "center", alignItems: "center"}}>
       <CircularProgress />
-    </div>:
+    </div>): (
     <StyledBox>
-      <Typography gutterBottom variant="h6" component="h1">
-            Übersicht 
+      <Typography gutterBottom variant="h4" component="h1">
+            Übersicht der Stimmen.
             <p>Umfragetitel: {title}</p> 
-            <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
             <p>Anzahl der Abstimmungsberechtigten: {numberPermissions + ""}</p>
-          <p>
-            {votingCompleted && !abgeschickt && <>"Alle Fragen wurden beantwortet, aber noch nicht abgeschickt." <button onClick={abschicken()}>Abschicken</button></>
-            } 
-          </p>
       </Typography>
-          <p>
-            { !isLoading && !!user && !abgeschickt &&
-            <Box sx={{display: "flex", flexDirection: "column", gap: "10px"}}>
-              {
+      <Typography gutterBottom variant="h6" component="h1">
+            <p>Umfrage id {surveyId}</p> <p>erstellt von {creatorId} </p>
+      </Typography>
+    </StyledBox>)}
+           {!isLoading && !!user && !abgeschickt &&
                 questionArray.map((item, index)=> 
-                {
-                  return(
-                    
-                        <AC key={item.id} setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId} questionText={item.text}></AC> 
-                    
-                  )
-                }
+                  {
+                    return(
+                      <Stack sx={{ p:6, m: 8, flexFlow:"row wrap"}}>
+                          <AC key={item.id} setVote={setVote} questionDocRef = {questionDocRefs[index]} questionId={item.id} creatorId={creatorId} surveyId={surveyId} questionText={item.text}></AC> 
+                      </Stack>
+                    )
+                  }
                 )
-              }
-            </Box>  
           }
-          </p>
-    </StyledBox>
-}</Box>  
-)
+    
+</Stack>  )
 }
 
