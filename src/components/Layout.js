@@ -31,6 +31,8 @@ export default function Layout(props){
     const userData = { uid: null};
     const [user, setUser] = react.useState(userData)
     const [mode, setMode] = useState("light");
+    
+
     const darkTheme = createTheme({
         palette: {
         mode: mode,

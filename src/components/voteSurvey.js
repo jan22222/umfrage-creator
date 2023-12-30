@@ -4,7 +4,7 @@
     import {CollectionReference, onSnapshot} from "firebase/firestore";
     import { serverTimestamp } from 'firebase/firestore'
     import { db } from '../firebase'
-    import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs, where, query } from "firebase/firestore";
+    import { collection, addDoc, setDoc, doc, getDoc, updateDoc, getDocs, where, query } from "firebase/firestore";
     import { Typography, CardActions, Paper, Box, Card } from '@mui/material';
     import AC from "./AnswersForCarousel"
     import { styled } from '@mui/system';
@@ -38,18 +38,24 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
    useEffect(() => {
         emailAbgleich()
         setTimeout(function () {
-          
-            console.log("voteSurvey")
-          console.log("user " , user)
-          console.log(user.email, "useremail")
-          console.log(times, "vergleich")
-          console.log("creatorId", creatorId)
-          console.log("surveyId", surveyId)
-        
-    
+
+
+
           const colRef = collection(db, creatorId)  
           console.log("here 1")   
           const docRef = doc(colRef, surveyId)
+
+                
+          const colRefy = collection(db, "Invitations " + user.email)     
+          const docRefy = doc(colRefy, surveyId)
+              
+          const data = {
+              watched : true
+          }
+   
+          updateDoc(docRefy, data).then(()=>{console.log("updated", docRefy, data)})
+          
+
           const colRef2 = collection(docRef, "questions")
           console.log("here 2")   
     
@@ -117,9 +123,6 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
       });
     }
       
-  
-  
-
   async function checkForAbgeschickt(){
     // damit voten/ändern nachträglich unmöglich wird
      function wichtig() {
@@ -233,7 +236,6 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
   //useMemo triggert diese Funktion
   async function emailAbgleich(){
     await loadTimes()
-    console.log("________________________________", times)
     return times
   }
 
@@ -260,21 +262,23 @@ import { QuestionAnswer, SettingsInputAntennaSharp } from '@mui/icons-material';
                 <>
                 <Card>
                 <Typography gutterBottom variant="h5" component="h5">
+                {questionAndAnswerArray.length > 0 ? <> 
                   <h2>Ihre Votes</h2>
-                  <table >
-                    <tr>
-                      <th>Frage</th>
-                      <th>Antwort</th>
-                    </tr>
-                  
-                      {questionAndAnswerArray.map(el=>
-                        <tr>
-                          <td>{el.questionText}</td>
-                          <td>{el.answerText}</td>
-                        </tr>
-                      )
-                      }
-                  </table>
+                    <table >
+                      <tr>
+                        <th>Frage</th>
+                        <th>Antwort</th>
+                      </tr>
+                    
+                        {questionAndAnswerArray.map(el=>
+                          <tr>
+                            <td>{el.questionText}</td>
+                            <td>{el.answerText}</td>
+                          </tr>
+                        )
+                        }
+                    </table>
+                  </>: <>Keine Fragen angelegt.</>}
                   </Typography>
                   </Card>
                 {

@@ -13,7 +13,7 @@ import { Box } from "@mui/material";
 import { db } from '../firebase'
 import {collection, getDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { query, where } from "firebase/firestore";
-
+import { serverTimestamp } from 'firebase/firestore'
 
 
 
@@ -51,8 +51,9 @@ export default function Invitation(props) {
             console.log("einlad"+ email)
             const colxRef = collection(db, "Invitations " + email) 
             console.log(colxRef) 
-            const docxRef = addDoc(colxRef, {link: "./vote/"+creatorId+"/"+surveyId, title,
-            creatoremail: user.email}) 
+            const docxRef = doc(colxRef, surveyId) 
+            setDoc(docxRef,{link: "./vote/"+creatorId+"/"+surveyId, title,
+            creatoremail: user.email, timestamp: serverTimestamp()})
             console.log(docxRef)
             console.log("geadded")
             const serviceId = "service_hsd4xpj";
@@ -153,7 +154,7 @@ export default function Invitation(props) {
       </h1>
       <h1>Liste der eingetragenen Teilnehmer:</h1>
         <h2>
-          {times?times.map(function(data, index) {
+          {times ? times.map(function(data, index) {
             return (
               <div>
                 {index+1}:  {data.email}

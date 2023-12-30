@@ -1,10 +1,15 @@
-import react from "react"
+import react, { useEffect } from "react"
 import NavList from "./NavList";
 import Box from '@mui/material/Box';
-import {AppBar, Switch, Stack, Typography} from '@mui/material';
+import {AppBar, Switch, Stack, Typography, Badge, } from '@mui/material';
 import {makeStyles} from "@mui/styles";
 import {styled} from "@mui/material/styles"
 import Brightness6Icon from '@mui/icons-material/Brightness6';
+import MailIcon from '@mui/icons-material/Mail';
+import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
+import { db } from '../firebase'
+import {collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
+
 
 const useStyles = makeStyles({
     page:{
@@ -36,7 +41,26 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 
 export default function Topbar(props){
     const classes = useStyles()
-    const [checked,setChecked] = react.useState(false)
+    const [checked, setChecked] = react.useState(false)
+    const [batchCounter, setBatchCounter] = react.useState(0);
+
+    useEffect(()=>{
+      console.log("topbar useEffect")
+      const colRef = collection(db, "Invitations " + props.user.email)     
+          const unsubscribe = onSnapshot(colRef, snapshot => {
+            console.log("jet", snapshot)
+              const newTimes = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              })
+            );
+            newTimes.forEach((el)=>{
+              console.log(el)
+              if(el.watched === undefined){
+                setBatchCounter(batchCounter+1)
+              }
+            })
+    })},[])
 
     function handleChange(){
       
@@ -53,9 +77,7 @@ export default function Topbar(props){
 
     return(
     
-        <Box
-            
-        >
+        <Box>
              <AppBar    user={props.user}     position="static"
                 style={{ height: "120px", background: "secondary", width:"100vw",
                   fontSize: '1.2rem',
@@ -81,6 +103,11 @@ export default function Topbar(props){
                         }
                     </>
                     <StyledStack>
+                      <a href="/">
+                        <Badge badgeContent={batchCounter} color="secondary">
+                          <MailIcon color="action" />
+                        </Badge>
+                      </a>
                       <Brightness6Icon/>
                       <Switch
                         color="warning"
@@ -92,6 +119,5 @@ export default function Topbar(props){
                  </StyledStack>
              </AppBar>
         </Box>
-  
     )
 }

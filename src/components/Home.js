@@ -1,5 +1,5 @@
 import react from "react"
-import {onSnapshot} from "firebase/firestore";
+import {onSnapshot, updateDoc} from "firebase/firestore";
 
 import { Box, Card, CardActionArea, CardContent, Typography } from "@mui/material";
 
@@ -23,6 +23,14 @@ export default function Home(props){
         );
         setInvitations(newTimes);
         console.log("invitations", newTimes)
+        //add a watched field to each doc
+        const data = {
+            watched : true
+        }
+        invitations.map((inv)=>{
+            let docRef = doc(colRef, inv.id)
+            updateDoc(docRef, data)
+        })
       });
       return null
    }
