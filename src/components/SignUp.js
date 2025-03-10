@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import Alert from "@mui/material/Alert";
 import emailjs from "@emailjs/browser";
@@ -12,6 +13,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
@@ -24,6 +26,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [errormessage, setErrormessage] = useState("");
 
+  const [user, setUser] = useState(null);
   //Check for valid REgistration values gets prepared here.
 
   function ValidateEmail(input) {
@@ -71,8 +74,7 @@ const Signup = () => {
           }
           sendEmail();
           alert("Erfolgreich registriert.");
-          navigate("../home");
-          // ...
+          navigate("/home");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -86,8 +88,7 @@ const Signup = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
+    <Card sx={{ padding: "30px" }}>
       {errormessage != "" && (
         <Alert severity="error">
           {errormessage == "auth/wrong-password" && <>Passwort falsch.</>}
@@ -153,7 +154,7 @@ const Signup = () => {
           </Grid>
         </Box>
       </Box>
-    </Container>
+    </Card>
   );
 };
 

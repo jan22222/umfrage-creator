@@ -1,4 +1,4 @@
-import react from "react";
+import react, { useState } from "react";
 import { onSnapshot, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
@@ -26,7 +26,8 @@ export default function Home() {
   const [invitations, setInvitations] = react.useState([]);
   const [isLoading, setIsLoading] = react.useState(true);
   const [isLoggedIn, setIsloggedIn] = react.useState(false);
-  const [email, setEmail] = react.useState("");
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
 
   function loadInvitations(user) {
     console.log(user);
@@ -67,44 +68,40 @@ export default function Home() {
   });
 
   return (
-    <Paper sx={{ width: "100%" }}>
-      <Stack sx={{ width: "100%" }}>
-        {isLoggedIn ? (
-          <>
-            <h1>Willkommen, {email}</h1>
-
-            <h1>Invitations</h1>
-            {invitations.length === 0 ? (
-              <h1>empty</h1>
-            ) : (
-              invitations.map(function (data, index) {
-                return (
-                  <a href={data.link} style={{ textDecoration: "none" }}>
-                    <Card sx={{ width: "100%" }}>
-                      <CardActionArea sx={{ width: "100%" }}>
-                        <CardContent>
-                          <Typography gutterBottom variant="h5" component="h2">
-                            {index + 1}. Einladung zur Umfrage "{data.title}"
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            component="p"
-                          >
-                            <p>Erstellt von {data.creatoremail}.</p>
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                  </a>
-                );
-              })
-            )}
-          </>
-        ) : (
-          <>Sie sind ausgeloggt.</>
-        )}
-      </Stack>
-    </Paper>
+    <>
+      {isLoggedIn ? (
+        <Card padding="max(20px,20%)">
+          <h1>Invitations:</h1>
+          {invitations.length === 0 ? (
+            <h1>empty</h1>
+          ) : (
+            invitations.map(function (data, index) {
+              return (
+                <a href={data.link} style={{ textDecoration: "none" }}>
+                  <Card sx={{ width: "100%" }}>
+                    <CardActionArea sx={{ width: "100%" }}>
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2">
+                          {index + 1}. Einladung zur Umfrage "{data.title}"
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="p"
+                        >
+                          <p>Erstellt von {data.creatoremail}.</p>
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </a>
+              );
+            })
+          )}
+        </Card>
+      ) : (
+        <>Sie sind ausgeloggt.</>
+      )}
+    </>
   );
 }

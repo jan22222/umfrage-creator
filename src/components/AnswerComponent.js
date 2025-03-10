@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState, useContext } from 'react';
-import { MaterialReactTable } from 'material-react-table';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
+} from "react";
+import { MaterialReactTable } from "material-react-table";
 
 import {
   Box,
@@ -13,40 +19,61 @@ import {
   Stack,
   TextField,
   Tooltip,
-} from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+  Card,
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
+const states = [];
 
+const Example = ({
+  questionText,
 
-const states = []
-
-const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAnswer, creatorId, surveyId, questionId}) => {
-
-  useEffect(()=>{
-    console.log("AnswerComponent")
-    console.log("user", user)
-    setTableData(data)
-    console.log(" table data ", data)
-    console.log("data in surveygrid" , data, "data in tableData", tableData)
-  },[data])
+  data,
+  deleteAnswer,
+  updateAnswer,
+  createAnswer,
+  creatorId,
+  surveyId,
+  questionId,
+}) => {
+  useEffect(() => {
+    console.log("AnswerComponent");
+    console.log("user", user);
+    setTableData(data);
+    console.log(" table data ", data);
+    console.log("data in surveygrid", data, "data in tableData", tableData);
+  }, [data]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
+
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      setUser(userx);
+      setEmail(userx.email);
+    } else {
+      setUser(null);
+      setEmail("");
+    }
+  });
 
   const handleCreateNewRow = (values) => {
-    if (values.id===""){
-      
+    if (values.id === "") {
     }
-    createAnswer(values)
+    createAnswer(values);
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values;
       //send/receive api updates here, then refetch or update local table data for re-render
-      console.log(values)
-      updateAnswer({...values});
+      console.log(values);
+      updateAnswer({ ...values });
       exitEditingMode(); //required to exit editing mode and close modal
     }
   };
@@ -55,11 +82,10 @@ const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAn
     setValidationErrors({});
   };
 
-  const handleDeleteRow = 
-    (row) => {
-    console.log("delete row")  
-    deleteAnswer(tableData[row.id].id)
-    }
+  const handleDeleteRow = (row) => {
+    console.log("delete row");
+    deleteAnswer(tableData[row.id].id);
+  };
 
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
@@ -68,11 +94,11 @@ const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAn
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
           const isValid =
-            cell.column.id === 'email'
+            cell.column.id === "email"
               ? validateEmail(event.target.value)
-              : cell.column.id === 'age'
-              ? validateAge(+event.target.value)
-              : validateRequired(event.target.value);
+              : cell.column.id === "age"
+                ? validateAge(+event.target.value)
+                : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
@@ -92,35 +118,34 @@ const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAn
     [validationErrors],
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'ID',
-        enableColumnOrdering: false,
-        enableEditing: false, //disable editing on this column
-        enableSorting: false,
-        size: 80,
-      },
-      {
-        accessorKey: 'answer',
-        header: 'Antwort',
-        size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
-      }])
-
+  const columns = useMemo(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      enableColumnOrdering: false,
+      enableEditing: false, //disable editing on this column
+      enableSorting: false,
+      size: 80,
+    },
+    {
+      accessorKey: "answer",
+      header: "Antwort",
+      size: 140,
+      muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        ...getCommonEditTextFieldProps(cell),
+      }),
+    },
+  ]);
 
   return (
-    <> 
+    <Card padding="max(20px,20%)">
       <h1>{questionText}</h1>
 
       <MaterialReactTable
         displayColumnDefOptions={{
-          'mrt-row-actions': {
+          "mrt-row-actions": {
             muiTableHeadCellProps: {
-              align: 'center',
+              align: "center",
             },
             size: 120,
           },
@@ -133,7 +158,7 @@ const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAn
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
-          <Box sx={{ display: 'flex', gap: '1rem' }}>
+          <Box sx={{ display: "flex", gap: "1rem" }}>
             <Tooltip arrow placement="left" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
@@ -162,7 +187,7 @@ const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAn
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </>
+    </Card>
   );
 };
 
@@ -170,7 +195,7 @@ const Example = ({questionText, user, data, deleteAnswer, updateAnswer, createAn
 export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = '';
+      acc[column.accessorKey ?? ""] = "";
       return acc;
     }, {}),
   );
@@ -188,13 +213,13 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
             sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: "1.5rem",
             }}
           >
             {columns.map((column) => {
-              if (column.accessorKey!="id") {
+              if (column.accessorKey != "id") {
                 return (
                   <TextField
                     key={column.accessorKey}
@@ -204,11 +229,13 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
                       setValues({ ...values, [e.target.name]: e.target.value })
                     }
                   />
-            )}})}
+                );
+              }
+            })}
           </Stack>
         </form>
       </DialogContent>
-      <DialogActions sx={{ p: '1.25rem' }}>
+      <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Abbrechen</Button>
         <Button color="secondary" onClick={handleSubmit} variant="contained">
           Neue Antwort erstellen
@@ -218,7 +245,8 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   );
 };
 
-const validateRequired = (value) => !!value.length? value.length < 60: false;
+const validateRequired = (value) =>
+  !!value.length ? value.length < 60 : false;
 const validateEmail = (email) =>
   !!email.length &&
   email

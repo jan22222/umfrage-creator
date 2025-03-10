@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { CollectionReference, onSnapshot } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 import {
   collection,
   addDoc,
@@ -21,9 +23,7 @@ import { styled } from "@mui/system";
 
 import { QuestionAnswer, SettingsInputAntennaSharp } from "@mui/icons-material";
 
-export const UserContext = createContext(null);
-
-export default function Example({ user }) {
+export default function Example() {
   const [questionArray, setQuestionArray] = useState([]);
   const [questionAndAnswerArray, setQuestionAndAnswerArray] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +35,8 @@ export default function Example({ user }) {
   const { creatorId, surveyId } = useParams();
   const [title, setTitle] = useState("");
   const [times, setTimes] = useState(false);
-
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
   //wenn sich email des users ändert, berechne erlaubnis neu. (in memoAuth wird die Email gespeichert,
   //um sie mit der aktuellen user email zu vergleichen. leere email = auch kein auth)
   const StyledBox = styled(Box)(({ theme }) => ({
@@ -46,7 +47,16 @@ export default function Example({ user }) {
     padding: "10px",
   }));
 
-  useEffect(() => {
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      setEmail(userx.email);
+      setUser(userx);
+    } else {
+      setUser(null);
+    }
+  });
+
+  function xyz() {
     emailAbgleich();
     setTimeout(function () {
       const colRef = collection(db, creatorId);
@@ -110,9 +120,8 @@ export default function Example({ user }) {
         .then(() => checkForAbgeschickt());
 
       console.log("in voteSurvey", user);
-    }, 5000);
-  }, [user]);
-
+    });
+  }
   async function loadTimes() {
     const colRef = collection(db, creatorId);
     const docRef = doc(colRef, surveyId);
@@ -247,16 +256,15 @@ export default function Example({ user }) {
   }
 
   return (
-    <StyledBox>
-      <Card>
-        <Typography gutterBottom variant="h5" component="h5">
-          Umfrage:{" "}
-          <p>
-            Id {surveyId}, erstellt von {creatorId}{" "}
-          </p>
-          <p>Umfragetitel: {title}</p>
-        </Typography>
-      </Card>
+    <Card padding="max(20px,20%)">
+      <Typography gutterBottom variant="h5" component="h5">
+        Umfrage:{" "}
+        <p>
+          Id {surveyId}, erstellt von {creatorId}{" "}
+        </p>
+        <p>Umfragetitel: {title}</p>
+      </Typography>
+
       {!times && <h1>Sie sind zu dieser Umfrage nicht zugelassen.</h1>}
       <h1>
         {times && votingCompleted && !abgeschickt && (
@@ -311,6 +319,6 @@ export default function Example({ user }) {
           })}
         </>
       )}
-    </StyledBox>
+    </Card>
   );
 }

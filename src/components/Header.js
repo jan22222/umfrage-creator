@@ -20,7 +20,16 @@ const Header = (props) => {
   const theme = useTheme();
   const [isLoggedIn, setIsloggedIn] = useState(false);
   const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
   const [checked, setChecked] = useState(false);
+
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      setUser(userx);
+    } else {
+      setUser(null);
+    }
+  });
 
   function handleChange() {
     if (props.mode === "dark") {
@@ -82,7 +91,7 @@ const Header = (props) => {
 
           <Brightness6Icon />
           <Switch
-            color="warning"
+            color="secondary"
             checked={checked}
             onChange={handleChange}
             inputProps={{ "aria-label": "controlled" }}

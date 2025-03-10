@@ -1,6 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState, useContext } from 'react';
-import { MaterialReactTable } from 'material-react-table';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
+} from "react";
+import { MaterialReactTable } from "material-react-table";
 import {
+  Card,
   Box,
   Button,
   Dialog,
@@ -12,38 +19,54 @@ import {
   Stack,
   TextField,
   Tooltip,
-} from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import UserContext from "./Editorquestions.js"
-const states = []
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
+import UserContext from "./Editorquestions.js";
+const states = [];
 
-const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, creatorId, surveyId}) => {
+const Example = ({
+  data,
 
-  
-  useEffect(()=>{
-    console.log("user", user)
-    setTableData(data)
-    console.log(" table data ", data)
-    console.log("data in surveygrid" , data, "data in tableData", tableData)
-  },[data])
+  deleteQuestion,
+  updateQuestion,
+  createQuestion,
+  creatorId,
+  surveyId,
+}) => {
+  useEffect(() => {
+    setTableData(data);
+    console.log(" table data ", data);
+    console.log("data in surveygrid", data, "data in tableData", tableData);
+  }, [data]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
+
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      setUser(userx);
+    } else {
+      setUser(null);
+    }
+  });
 
   const handleCreateNewRow = (values) => {
-    if (values.id===""){
-      
+    if (values.id === "") {
     }
-    createQuestion(values)
+    createQuestion(values);
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values;
       //send/receive api updates here, then refetch or update local table data for re-render
-      console.log(values)
-      updateQuestion({...values});
+      console.log(values);
+      updateQuestion({ ...values });
       exitEditingMode(); //required to exit editing mode and close modal
     }
   };
@@ -52,11 +75,10 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
     setValidationErrors({});
   };
 
-  const handleDeleteRow = 
-    (row) => {
-    console.log("delete row")  
-    deleteQuestion(tableData[row.id].id)
-    }
+  const handleDeleteRow = (row) => {
+    console.log("delete row");
+    deleteQuestion(tableData[row.id].id);
+  };
 
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
@@ -65,11 +87,11 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
           const isValid =
-            cell.column.id === 'email'
+            cell.column.id === "email"
               ? validateEmail(event.target.value)
-              : cell.column.id === 'age'
-              ? validateAge(+event.target.value)
-              : validateRequired(event.target.value);
+              : cell.column.id === "age"
+                ? validateAge(+event.target.value)
+                : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
@@ -89,33 +111,32 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
     [validationErrors],
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'ID',
-        enableColumnOrdering: false,
-        enableEditing: false, //disable editing on this column
-        enableSorting: false,
-        size: 80,
-      },
-      {
-        accessorKey: 'text',
-        header: 'Text',
-        size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
-      }])
-
+  const columns = useMemo(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      enableColumnOrdering: false,
+      enableEditing: false, //disable editing on this column
+      enableSorting: false,
+      size: 80,
+    },
+    {
+      accessorKey: "text",
+      header: "Text",
+      size: 140,
+      muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        ...getCommonEditTextFieldProps(cell),
+      }),
+    },
+  ]);
 
   return (
-    <> 
+    <Card padding="max(20px,20%)">
       <MaterialReactTable
         displayColumnDefOptions={{
-          'mrt-row-actions': {
+          "mrt-row-actions": {
             muiTableHeadCellProps: {
-              align: 'center',
+              align: "center",
             },
             size: 120,
           },
@@ -128,7 +149,7 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
-          <Box sx={{ display: 'flex', gap: '1rem' }}>
+          <Box sx={{ display: "flex", gap: "1rem" }}>
             <Tooltip arrow placement="left" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
@@ -140,12 +161,21 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
               </IconButton>
             </Tooltip>
             <Tooltip arrow placement="right" title="Link">
-              <IconButton color="error" >
-                <a href={"/survey/"+creatorId+"/"+surveyId+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
+              <IconButton color="error">
+                <a
+                  href={
+                    "/survey/" +
+                    creatorId +
+                    "/" +
+                    surveyId +
+                    "/" +
+                    tableData[row.id].id
+                  }
+                >
+                  <ArrowForwardIosIcon />
+                </a>
               </IconButton>
             </Tooltip>
-          
-
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
@@ -164,7 +194,7 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </>
+    </Card>
   );
 };
 
@@ -172,7 +202,7 @@ const Example = ({data, user, deleteQuestion, updateQuestion, createQuestion, cr
 export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = '';
+      acc[column.accessorKey ?? ""] = "";
       return acc;
     }, {}),
   );
@@ -190,13 +220,13 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
             sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: "1.5rem",
             }}
           >
             {columns.map((column) => {
-              if (column.accessorKey!="id") {
+              if (column.accessorKey != "id") {
                 return (
                   <TextField
                     key={column.accessorKey}
@@ -206,11 +236,13 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
                       setValues({ ...values, [e.target.name]: e.target.value })
                     }
                   />
-            )}})}
+                );
+              }
+            })}
           </Stack>
         </form>
       </DialogContent>
-      <DialogActions sx={{ p: '1.25rem' }}>
+      <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Abbrechen</Button>
         <Button color="secondary" onClick={handleSubmit} variant="contained">
           Neue Frage erstellen
@@ -220,7 +252,8 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   );
 };
 
-const validateRequired = (value) => !!value.length? value.length < 60: false;
+const validateRequired = (value) =>
+  !!value.length ? value.length < 60 : false;
 const validateEmail = (email) =>
   !!email.length &&
   email

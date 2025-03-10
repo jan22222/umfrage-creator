@@ -9,6 +9,8 @@ import Feed from "./Feed";
 import { Box, Stack, Paper } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { lime, purple } from "@mui/material/colors";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 import {
   Card,
   CardHeader,
@@ -44,9 +46,18 @@ const useStyles = makeStyles({
 
 export default function Layout(props) {
   const classes = useStyles();
-
-  const user = props.user;
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
   const [mode, setMode] = useState("light");
+
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      setUser(userx);
+    } else {
+      setUser(null);
+    }
+  });
+
   const lightTheme = createTheme({
     palette: {
       mode: mode,
@@ -62,7 +73,7 @@ export default function Layout(props) {
     palette: {
       mode: mode,
       primary: {
-        main: "#24396b",
+        main: "#3653b8",
       },
       secondary: {
         main: "#ffe9bf",

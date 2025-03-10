@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
-import { NavLink, useParams } from "react-router-dom";
 
+import { NavLink, useParams } from "react-router-dom";
+import Card from "@mui/material/Card";
 import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -21,6 +21,10 @@ import { getAuth } from "firebase/auth";
 // TODO remove, this demo shouldn't need to reset the theme.
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 const defaultTheme = createTheme();
 
 export default function SignIn(props) {
@@ -30,33 +34,26 @@ export default function SignIn(props) {
   const [password, setPassword] = useState("");
   const [errormessage, setErrormessage] = useState("");
 
+  const [user, setUser] = useState(null);
   const { message } = useParams();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    handleLogout();
-  }, []);
+  React.useEffect(() => {}, []);
 
-  const handleLogout = () => {
-    signOut(auth)
-      .then((res) => {
-        alert("Sie sind jetzt abgemeldet.");
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      navigate("/logout");
+    } else {
+      setUser(null);
+    }
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-
         navigate("/home");
-        console.log(user);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -66,7 +63,7 @@ export default function SignIn(props) {
   };
 
   return (
-    <div>
+    <Card sx={{ paddingBottom: "30px" }}>
       {props.user != null ? (
         <h1>Sie sind bereits angemeldet. Bitte erst abmelden.</h1>
       ) : (
@@ -96,53 +93,56 @@ export default function SignIn(props) {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Addresse"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Passwort"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Anmelden
-              </Button>
-              <Grid container justifyContent="space-between">
-                <Grid item>
-                  <Link href="../signup" variant="body2">
-                    {"Neu einschreiben."}
-                  </Link>
+
+            <CardContent>
+              <Box component="form" onSubmit={handleSubmit} noValidate>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Addresse"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Passwort"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Anmelden
+                </Button>
+                <Grid container justifyContent="space-between">
+                  <Grid item>
+                    <Link href="../signup" variant="body2">
+                      {"Neu einschreiben."}
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link href="../forgot-pw" variant="body2">
+                      {"Passwort vergessen?"}
+                    </Link>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Link href="../forgot-pw" variant="body2">
-                    {"Passwort vergessen?"}
-                  </Link>
-                </Grid>
-              </Grid>
-            </Box>
+              </Box>
+            </CardContent>
           </Box>
         </Container>
       )}
-    </div>
+    </Card>
   );
 }

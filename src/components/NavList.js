@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -13,6 +13,8 @@ import Login from "@mui/icons-material/Login";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 import {
   FormControl,
   FormControlLabel,
@@ -23,6 +25,8 @@ import {
 import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
 
 export default function Navbar({ mode }) {
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
   const StyledList = styled("List")(({ theme }) => ({
     height: "100%",
     background: theme.palette.primary.main,

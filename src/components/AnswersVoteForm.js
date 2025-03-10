@@ -10,7 +10,8 @@ import  {Button, Card} from '@mui/material';
 import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
 import { db } from '../firebase'
 import {collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
-
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function ErrorRadios(props) {
   const [answerText, setAnswerText] = React.useState("");
@@ -20,18 +21,23 @@ export default function ErrorRadios(props) {
   const [answerDocRefArray, setAnswerDocRefArray] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [answerArray, setAnswerArray] = useState([])
+    const [email, setEmail] = useState("");
+    const [user, setUser] = useState(null);
+
+      onAuthStateChanged(auth, (userx) => {
+        if (typeof userx != "undefined" && userx != null) {
+          setUser(userx);
+          setEmail(userx.email);
+        } else {
+          setUser(null);
+          setEmail("");
+        }
+      });
 
   useEffect(()=>{
     
-    console.log("AnswersVoteForm")
-  
-    console.log("props.questionText", props.questionText)
-    console.log("creatorId", props.creatorId)
-    console.log("surveyId", props.surveyId)
-    console.log("qId", props.questionId)
-    console.log("props.questionDocRef", props.questionDocRef)
-    console.log("creatorId", props.creatorId)
-    console.log("surveyId", props.surveyId)
+
+
 
       const colRef3 = collection(props.questionDocRef, "answers")
 
@@ -103,7 +109,7 @@ export default function ErrorRadios(props) {
   };
 
   return (
-    <Card variant="outlined" sx={{p:3}}>
+    <Card padding="max(20px,20%)">
     <form onSubmit={handleSubmit}>
       <FormControl  error={error} variant="standard">
         <FormLabel id="label1">Frage: {props.questionText}</FormLabel>

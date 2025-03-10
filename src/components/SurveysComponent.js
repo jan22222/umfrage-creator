@@ -1,5 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { MaterialReactTable } from 'material-react-table';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { MaterialReactTable } from "material-react-table";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 import {
   Box,
   Button,
@@ -12,30 +14,42 @@ import {
   Stack,
   TextField,
   Tooltip,
-  Typography
-} from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-const states = []
+  Typography,
+  Card,
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+const states = [];
 
-const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
-  useEffect(()=>{
-    setTableData(data)
-    console.log("data in surveygrid" , data, "data in tableData", tableData)
-  },[data])
+const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
+
+  onAuthStateChanged(auth, (userx) => {
+    if (typeof userx != "undefined" && userx != null) {
+      setUser(userx);
+    } else {
+      setUser(null);
+    }
+  });
+
+  useEffect(() => {
+    setTableData(data);
+    console.log("data in surveygrid", data, "data in tableData", tableData);
+  }, [data]);
 
   const handleCreateNewRow = (values) => {
-    createSurvey(values)
+    createSurvey(values);
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values;
       //send/receive api updates here, then refetch or update local table data for re-render
-      console.log(values)
+      console.log(values);
       updateSurvey(values);
       exitEditingMode(); //required to exit editing mode and close modal
     }
@@ -45,11 +59,10 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
     setValidationErrors({});
   };
 
-  const handleDeleteRow = 
-    (row) => {
-    console.log("delete row")  
-    deleteSurvey(tableData[row.id].id)
-    }
+  const handleDeleteRow = (row) => {
+    console.log("delete row");
+    deleteSurvey(tableData[row.id].id);
+  };
 
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
@@ -58,11 +71,11 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
           const isValid =
-            cell.column.id === 'email'
+            cell.column.id === "email"
               ? validateEmail(event.target.value)
-              : cell.column.id === 'age'
-              ? validateAge(+event.target.value)
-              : validateRequired(event.target.value);
+              : cell.column.id === "age"
+                ? validateAge(+event.target.value)
+                : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
@@ -82,94 +95,131 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
     [validationErrors],
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'ID',
-        enableColumnOrdering: false,
-        enableEditing: false, //disable editing on this column
-        enableSorting: false,
-        size: {xs: 0, md: 0, xl: 80},
-      },
-      {
-        accessorKey: 'title',
-        header: 'Titel',
-        size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
-      }])
-  
+  const columns = useMemo(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      enableColumnOrdering: false,
+      enableEditing: false, //disable editing on this column
+      enableSorting: false,
+      size: { xs: 0, md: 0, xl: 80 },
+    },
+    {
+      accessorKey: "title",
+      header: "Titel",
+      size: 140,
+      muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        ...getCommonEditTextFieldProps(cell),
+      }),
+    },
+  ]);
 
   return (
-    <> 
-      <MaterialReactTable
-        displayColumnDefOptions={{
-          'mrt-row-actions': {
-            muiTableHeadCellProps: {
-              align: 'center',
-            },
-            size: 120,
-          },
-        }}
-        columns={columns}
-        data={tableData}
-        editingMode="modal" //default
-        enableColumnOrdering
-        enableEditing
-        onEditingRowSave={handleSaveRowEdits}
-        onEditingRowCancel={handleCancelRowEdits}
-        renderRowActions={({ row, table }) => (
-          <Box sx={{ display: 'flex', gap: '1rem' }}>
-            <Tooltip arrow placement="left" title="Editieren">
-              <IconButton onClick={() => table.setEditingRow(row)}>
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow placement="right" title="Löschen">
-              <IconButton color="error" onClick={() => handleDeleteRow(row)}>
-                <Delete />
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow placement="right" title="ansehen">
-              <IconButton color="error" >
-                <a href={"/survey/"+user.uid+"/"+tableData[row.id].id}><ArrowForwardIosIcon/></a>
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow placement="right" title="Abstimmung">
-              <IconButton color="error"display={{xs:"none", md: "block"}}>
-                <a href={"/vote/"+user.uid+"/"+tableData[row.id].id}>Abstimmung</a>
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow placement="right" title="Einladen">
-              <IconButton color="error" display={{xs:"none", md: "block"}}>
-                <a href={"/survey/"+user.uid+"/"+tableData[row.id].id+"/invitation"}>Einladen</a>
-              </IconButton>
-            </Tooltip>                  
-            <Tooltip arrow placement="right" title="Ergebnisse">
-              <IconButton color="error" display={{xs:"none", md: "block"}}>
-                <a href={"/summary/"+user.uid+"/"+tableData[row.id].id}>Ergebnisse</a>
-              </IconButton>
-            </Tooltip>   
-          </Box>
-        )}
-        renderTopToolbarCustomActions={() => (
-          <Button
-            color="secondary"
-            onClick={() => setCreateModalOpen(true)}
-            variant="contained"
-          >
-            Neue Umfrage erstellen
-          </Button>
-        )}
-      />
-      <CreateNewAccountModal
-        columns={columns}
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onSubmit={handleCreateNewRow}
-      />
+    <>
+      {user != null ? (
+        <Card padding="max(20px,20%)">
+          <MaterialReactTable
+            displayColumnDefOptions={{
+              "mrt-row-actions": {
+                muiTableHeadCellProps: {
+                  align: "center",
+                },
+                size: 120,
+              },
+            }}
+            columns={columns}
+            data={tableData}
+            editingMode="modal" //default
+            enableColumnOrdering
+            enableEditing
+            onEditingRowSave={handleSaveRowEdits}
+            onEditingRowCancel={handleCancelRowEdits}
+            renderRowActions={({ row, table }) => (
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Tooltip arrow placement="left" title="Editieren">
+                  <IconButton onClick={() => table.setEditingRow(row)}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="Löschen">
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDeleteRow(row)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="ansehen">
+                  <IconButton color="error">
+                    <a
+                      href={"/survey/" + user.uid + "/" + tableData[row.id].id}
+                    >
+                      <ArrowForwardIosIcon />
+                    </a>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="Abstimmung">
+                  <IconButton
+                    color="error"
+                    display={{ xs: "none", md: "block" }}
+                  >
+                    <a href={"/vote/" + user.uid + "/" + tableData[row.id].id}>
+                      Abstimmung
+                    </a>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="Einladen">
+                  <IconButton
+                    color="error"
+                    display={{ xs: "none", md: "block" }}
+                  >
+                    <a
+                      href={
+                        "/survey/" +
+                        user.uid +
+                        "/" +
+                        tableData[row.id].id +
+                        "/invitation"
+                      }
+                    >
+                      Einladen
+                    </a>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="Ergebnisse">
+                  <IconButton
+                    color="error"
+                    display={{ xs: "none", md: "block" }}
+                  >
+                    <a
+                      href={"/summary/" + user.uid + "/" + tableData[row.id].id}
+                    >
+                      Ergebnisse
+                    </a>
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )}
+            renderTopToolbarCustomActions={() => (
+              <Button
+                color="secondary"
+                onClick={() => setCreateModalOpen(true)}
+                variant="contained"
+              >
+                Neue Umfrage erstellen
+              </Button>
+            )}
+          />
+          <CreateNewAccountModal
+            columns={columns}
+            open={createModalOpen}
+            onClose={() => setCreateModalOpen(false)}
+            onSubmit={handleCreateNewRow}
+          />
+        </Card>
+      ) : (
+        <div>not logged in.</div>
+      )}
     </>
   );
 };
@@ -178,7 +228,7 @@ const Example = ({data, user, deleteSurvey, updateSurvey, createSurvey}) => {
 export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = '';
+      acc[column.accessorKey ?? ""] = "";
       return acc;
     }, {}),
   );
@@ -196,13 +246,13 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
             sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: "1.5rem",
             }}
           >
             {columns.map((column) => {
-              if (column.accessorKey!="id") {
+              if (column.accessorKey != "id") {
                 return (
                   <TextField
                     key={column.accessorKey}
@@ -212,11 +262,13 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
                       setValues({ ...values, [e.target.name]: e.target.value })
                     }
                   />
-            )}})}
+                );
+              }
+            })}
           </Stack>
         </form>
       </DialogContent>
-      <DialogActions sx={{ p: '1.25rem' }}>
+      <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Abbrechen</Button>
         <Button color="secondary" onClick={handleSubmit} variant="contained">
           Neue Umfrage erstellen
@@ -226,7 +278,8 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   );
 };
 
-const validateRequired = (value) => !!value.length? value.length < 60: false;
+const validateRequired = (value) =>
+  !!value.length ? value.length < 60 : false;
 const validateEmail = (email) =>
   !!email.length &&
   email
