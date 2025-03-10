@@ -13,11 +13,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Sidebar() {
+export default function Sidebar({ mode }) {
   const classes = useStyles();
   return (
     <Box className={classes.drawer}>
-      <NavList />
+      <NavList mode={mode} />
     </Box>
   );
 }

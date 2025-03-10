@@ -47,35 +47,35 @@ export default function Layout(props) {
 
   const user = props.user;
   const [mode, setMode] = useState("light");
-  const theme = createTheme({
+  const lightTheme = createTheme({
     palette: {
       mode: mode,
       primary: {
-        light: "#757ce8",
-        main: "#3f50b5",
-        dark: "#002884",
-        contrastText: "#fff",
+        main: "#39c0d0",
       },
       secondary: {
-        light: "#ff7961",
-        main: "#f44336",
-        dark: "#ba000d",
-        contrastText: "#000",
+        main: "#52181c",
       },
     },
   });
   const darkTheme = createTheme({
     palette: {
       mode: mode,
+      primary: {
+        main: "#24396b",
+      },
+      secondary: {
+        main: "#ffe9bf",
+      },
     },
   });
 
   react.useEffect(() => {}, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
       <CssBaseline></CssBaseline>
-      <Header mode={mode} setMode={setMode} user={user}></Header>
+      <Header mode={mode} setMode={setMode}></Header>
       <Box
         className={Layout}
         position="fixed"
@@ -93,7 +93,7 @@ export default function Layout(props) {
               </Typography>
             </CardContent>
           </Card>
-          <Sidebar className={classes.drawer} />
+          <Sidebar className={classes.drawer} mode={mode} />
         </Box>
         <Box width="100%" height="100%" sx={{}}>
           <Feed children={props.children} className={classes.page} />

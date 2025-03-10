@@ -73,7 +73,11 @@ const Header = (props) => {
 
           <Avatar
             sx={{ width: 60, height: 60 }}
-            src="https://media.glamour.com/photos/5a425fd3b6bcee68da9f86f8/master/pass/best-face-oil.png"
+            src={
+              email == ""
+                ? "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.waBCV1LgeoC450qlxrl2_wAAAA%26pid%3DApi&f=1&ipt=1da4c77c3617031d06de4a174f0598ee2bb00153e58f5bfd75048b214816d108&ipo=images"
+                : "https://media.glamour.com/photos/5a425fd3b6bcee68da9f86f8/master/pass/best-face-oil.png"
+            }
           ></Avatar>
 
           <Brightness6Icon />

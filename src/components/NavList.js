@@ -22,12 +22,12 @@ import {
 } from "@mui/material/";
 import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
 
-const StyledList = styled("List")(({ theme }) => ({
-  height: "100%",
-  background: theme.palette.primary.main,
-}));
+export default function Navbar({ mode }) {
+  const StyledList = styled("List")(({ theme }) => ({
+    height: "100%",
+    background: theme.palette.primary.main,
+  }));
 
-export default function Navbar() {
   const navigate = useNavigate();
   const menuItems = [
     {
