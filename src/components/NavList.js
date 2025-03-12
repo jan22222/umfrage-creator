@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import List from "@mui/material/List";
+import Paper from "@mui/material/Paper";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -67,21 +67,24 @@ export default function Navbar({ mode }) {
     <StyledList>
       {menuItems.map((item) => {
         return (
-          <ListItem
-            key={item.text}
-            onClick={() => {
-              navigate(item.path);
-            }}
-          >
-            <ListItemButton hoveredStyle={hoveredStyle} color="primary">
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText
-                sx={{ display: { xs: "none", md: "block" } }}
-                primary={item.text}
-                tooltip={item.text}
-              />
-            </ListItemButton>
-          </ListItem>
+          <Paper>
+            <ListItem
+              sx={{ margin: "5px" }}
+              key={item.text}
+              onClick={() => {
+                navigate(item.path);
+              }}
+            >
+              <ListItemButton hoveredStyle={hoveredStyle} color="primary">
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText
+                  sx={{ display: { xs: "none", md: "block" } }}
+                  primary={item.text}
+                  tooltip={item.text}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Paper>
         );
       })}
     </StyledList>

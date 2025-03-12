@@ -59,6 +59,15 @@ export default function Layout(props) {
   });
 
   const lightTheme = createTheme({
+    typography: {
+      fontFamily: [
+        "Nunito",
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+      ].join(","),
+    },
     palette: {
       mode: mode,
       primary: {
@@ -70,6 +79,15 @@ export default function Layout(props) {
     },
   });
   const darkTheme = createTheme({
+    typography: {
+      fontFamily: [
+        "Nunito",
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+      ].join(","),
+    },
     palette: {
       mode: mode,
       primary: {

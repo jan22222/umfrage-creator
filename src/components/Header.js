@@ -8,6 +8,7 @@ import {
   Container,
   AppBar,
   Avatar,
+  Box,
 } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import Brightness6Icon from "@mui/icons-material/Brightness6";
@@ -61,11 +62,31 @@ const Header = (props) => {
         direction="row"
         spacing={2}
         justifyContent="space-around"
-        marginRight={5}
+        padding={5}
         alignItems="center"
         width="100vw"
       >
-        <Typography variant="h6">Survey Master</Typography>
+        <Stack
+          bgcolor={theme.palette.primary.main}
+          height="100px"
+          direction="row"
+          width="200px"
+          alignItems="center"
+        >
+          <Typography variant="h3"> S</Typography>
+          <Typography
+            variant="h6"
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
+            urvey Master
+          </Typography>
+          <Typography
+            variant="h3"
+            sx={{ display: { xs: "block", md: "none" } }}
+          >
+            M
+          </Typography>
+        </Stack>
         <Stack direction="row" gap={3} alignItems="center">
           {pages.map((page) => (
             <Link
