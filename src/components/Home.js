@@ -35,13 +35,12 @@ export default function Home() {
 
     const colRef = collection(db, "Invitations " + user.email);
     const unsubscribe = onSnapshot(colRef, (snapshot) => {
-      console.log("jet", snapshot);
       const newTimes = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       setInvitations(newTimes);
-      console.log("invitations", newTimes);
+
       //add a watched field to each doc
       const data = {
         watched: true,

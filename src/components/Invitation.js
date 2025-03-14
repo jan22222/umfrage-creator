@@ -5,8 +5,7 @@ import { useMemo, useContext, createContext } from "react";
 import { useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import { useParams } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+
 import { onSnapshot } from "firebase/firestore";
 
 import { Box } from "@mui/material";
@@ -23,28 +22,32 @@ import {
 } from "firebase/firestore";
 import { query, where } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function Invitation(props) {
   const { surveyId, creatorId } = useParams();
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ email: "" });
   const [emails, setEmails] = useState([]);
   const [email, setEmail] = useState("");
   const [times, setTimes] = useState();
   const [emailError, setEmailError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [sender, setSender] = useState(props.user.email);
-  const [auth, setAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [sender, setSender] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [title, setTitle] = useState("");
 
   onAuthStateChanged(auth, (userx) => {
     if (typeof userx != "undefined" && userx != null) {
-      setEmail(userx.email);
       setUser(userx);
+      setSender(userx.email);
+      surveysLaden();
+      setIsLoading(false);
     } else {
-      setEmail("");
+      setSender("");
       setUser(null);
+      setIsLoading(true);
     }
   });
 
@@ -70,7 +73,7 @@ export default function Invitation(props) {
           setDoc(docxRef, {
             link: "./vote/" + creatorId + "/" + surveyId,
             title,
-            creatoremail: user.email,
+            creatoremail: sender,
             timestamp: serverTimestamp(),
           });
           console.log(docxRef);
@@ -83,7 +86,7 @@ export default function Invitation(props) {
             async function sendEmail() {
               await emailjs.send(serviceId, templateId, {
                 email,
-                sender: user.email,
+                sender,
                 title,
                 link: "./vote/" + creatorId + "/" + surveyId,
               });
@@ -116,9 +119,8 @@ export default function Invitation(props) {
     setEmail("");
     console.log(emails);
   };
-  useEffect(() => {
-    setAuth(user.uid === creatorId);
 
+  const surveysLaden = () => {
     try {
       emailjs.init("UyDRDWE8kWGKZilvk");
       const colRef = collection(db, creatorId);
@@ -128,7 +130,6 @@ export default function Invitation(props) {
       });
 
       async function titlesetter() {
-        console.log("TITLESETTER");
         const doc = await getDoc(docRef);
         const title = await doc.get("title");
 
@@ -136,7 +137,6 @@ export default function Invitation(props) {
       }
       const colRef2 = collection(docRef, "permissions");
       const unsubscribe = onSnapshot(colRef2, (snapshot) => {
-        console.log("jet", snapshot);
         const newTimes = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -148,7 +148,7 @@ export default function Invitation(props) {
       //try block ends
       console.log("no survey");
     }
-  }, []);
+  };
 
   return (
     <div style={{ height: "80vh" }}>
@@ -166,84 +166,80 @@ export default function Invitation(props) {
         </div>
       ) : (
         <>
-          {auth && (
-            <Box
-              sx={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexDirection: "column",
+          <Box
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <h1>
+              Tragen Sie die zugelassenen Teilnehmer hier ein. (Email)
+              <p>
+                Sie werden per Email informiert und erhalten die
+                Teilnahmeberechtigung.
+              </p>
+            </h1>
+            <h1>Liste der eingetragenen Teilnehmer:</h1>
+            <h2>
+              {times ? (
+                times.map(function (data, index) {
+                  return (
+                    <div>
+                      {index + 1}: {data.email}
+                    </div>
+                  );
+                })
+              ) : (
+                <>Keine Einträge.</>
+              )}
+            </h2>
+            <h1>Liste der neuen Teilnehmer:</h1>
+            <h2>
+              {emails != [] ? (
+                emails.map(function (data, index) {
+                  return (
+                    <div>
+                      {index + 1}: {data}
+                      <p>
+                        <Button onClick={() => löschen(index)}>Löschen</Button>
+                      </p>
+                    </div>
+                  );
+                })
+              ) : (
+                <>Keine Einträge.</>
+              )}
+            </h2>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                Abschicken();
               }}
             >
-              <h1>
-                Tragen Sie die zugelassenen Teilnehmer hier ein. (Email)
-                <p>
-                  Sie werden per Email informiert und erhalten die
-                  Teilnahmeberechtigung.
-                </p>
-              </h1>
-              <h1>Liste der eingetragenen Teilnehmer:</h1>
-              <h2>
-                {times ? (
-                  times.map(function (data, index) {
-                    return (
-                      <div>
-                        {index + 1}: {data.email}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <>Keine Einträge.</>
-                )}
-              </h2>
-              <h1>Liste der neuen Teilnehmer:</h1>
-              <h2>
-                {emails != [] ? (
-                  emails.map(function (data, index) {
-                    return (
-                      <div>
-                        {index + 1}: {data}
-                        <p>
-                          <Button onClick={() => löschen(index)}>
-                            Löschen
-                          </Button>
-                        </p>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <>Keine Einträge.</>
-                )}
-              </h2>
-              <Button
+              Abschicken.
+            </Button>
+            <h1>Bitte hier eintragen:</h1>
+            <form autoComplete="off" onSubmit={AddEmail}>
+              <h2>Neue Email</h2>
+              <TextField
+                label="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 variant="outlined"
-                color="primary"
-                onClick={() => {
-                  Abschicken();
-                }}
-              >
-                Abschicken.
+                color="secondary"
+                type="email"
+                sx={{ mb: 3 }}
+                fullWidth
+                value={email}
+                error={emailError}
+              />
+              <Button variant="outlined" color="secondary" type="submit">
+                Add Email
               </Button>
-              <h1>Bitte hier eintragen:</h1>
-              <form autoComplete="off" onSubmit={AddEmail}>
-                <h2>Neue Email</h2>
-                <TextField
-                  label="Email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  variant="outlined"
-                  color="secondary"
-                  type="email"
-                  sx={{ mb: 3 }}
-                  fullWidth
-                  value={email}
-                  error={emailError}
-                />
-                <Button variant="outlined" color="secondary" type="submit">
-                  Add Email
-                </Button>
-              </form>
-            </Box>
-          )}
+            </form>
+          </Box>
         </>
       )}
     </div>

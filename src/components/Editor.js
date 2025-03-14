@@ -17,8 +17,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Card from "@mui/material/Card";
 
 export default function Editor() {
-  const initialFormStateSurvey = { id: null, title: "" };
-  const [currentSurvey, setCurrentSurvey] = useState(initialFormStateSurvey);
   const [times, setTimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -29,18 +27,20 @@ export default function Editor() {
       setUser(userx);
       setEmail(userx.email);
 
-      try {
-        const colRef = collection(db, user.uid);
-        const unsubscribe = onSnapshot(colRef, (snapshot) => {
-          const newTimes = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setTimes(newTimes);
-          setLoading(false);
-        });
-      } catch {
-        console.log("no survey");
+      if (typeof user != "undefined" && user != null) {
+        try {
+          const colRef = collection(db, userx.uid);
+          const unsubscribe = onSnapshot(colRef, (snapshot) => {
+            const newTimes = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setTimes(newTimes);
+            setLoading(false);
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
     } else {
       setUser(null);
@@ -49,19 +49,25 @@ export default function Editor() {
   });
 
   const createSurvey = (values) => {
-    const ref = collection(db, user.uid);
-    console.log(values.title);
-    addDoc(ref, { title: values.title });
-    console.log("createSurvey  ");
+    try {
+      const ref = collection(db, user.uid);
+
+      addDoc(ref, { title: values.title });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const deleteSurvey = async (id) => {
-    await deleteDoc(doc(db, user.uid, id));
+    try {
+      await deleteDoc(doc(db, user.uid, id));
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const updateSurvey = (updatedSurvey) => {
+  const updateSurvey = (updatedSurvey, user) => {
     const docRef = doc(db, user.uid, updatedSurvey.id);
     setDoc(docRef, updatedSurvey);
   };
-  useEffect(() => {}, [user]);
 
   return (
     <Card padding="max(20px,20%)">

@@ -38,7 +38,6 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
 
   useEffect(() => {
     setTableData(data);
-    console.log("data in surveygrid", data, "data in tableData", tableData);
   }, [data]);
 
   const handleCreateNewRow = (values) => {

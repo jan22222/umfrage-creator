@@ -35,7 +35,7 @@ export default function Editor(props) {
     if (typeof userx != "undefined" && userx != null) {
       setUser(userx);
       setEmail(userx.email);
-      setAuthx(user.uid === creatorId);
+      setAuthx(userx.uid === creatorId);
 
       try {
         const colRef = collection(db, creatorId);

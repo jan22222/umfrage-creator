@@ -22,10 +22,8 @@ import {
 import { CssBaseline } from "@mui/material";
 
 const useStyles = makeStyles({
-  Layout: {
-    backgroundColor: "black",
-    width: "100vw",
-    height: "100vh",
+  paper: {
+    backgroundColor: "lime",
   },
 
   page: {
@@ -76,6 +74,7 @@ export default function Layout(props) {
       secondary: {
         main: "#52181c",
       },
+      contrastText: "#fff",
     },
   });
   const darkTheme = createTheme({
@@ -104,6 +103,7 @@ export default function Layout(props) {
   return (
     <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
       <CssBaseline></CssBaseline>
+
       <Header mode={mode} setMode={setMode}></Header>
       <Box
         className={Layout}
