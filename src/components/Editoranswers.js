@@ -8,7 +8,7 @@ import { onSnapshot } from "firebase/firestore";
 
 import { db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 import {
   collection,
   addDoc,

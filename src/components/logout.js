@@ -1,25 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { onAuthStateChanged } from "firebase/auth";
+import { AuthContext } from "../AuthProvider";
+  
 
 const LogoutPg = () => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
-
-  onAuthStateChanged(auth, (userx) => {
-    if (typeof userx != "undefined" && userx != null) {
-      setUser(userx);
-    } else {
-      setUser(null);
-    }
-  });
+  const { user, logOut, loading } = useContext(AuthContext);
 
   const handleLogout = () => {
-    signOut(auth)
+    logOut()
       .then((res) => {
         navigate("../");
       })

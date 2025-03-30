@@ -8,7 +8,7 @@ import AnswersVoteForm from "./AnswersVoteForm2";
 import { red } from "@mui/material/colors";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 
 const theme = createTheme({
   palette: {

@@ -9,8 +9,7 @@ import Feed from "./Feed";
 import { Box, Stack, Paper } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { lime, purple } from "@mui/material/colors";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+
 import {
   Card,
   CardHeader,
@@ -19,6 +18,7 @@ import {
   FormControlLabel,
   Typography,
 } from "@mui/material";
+
 import { CssBaseline } from "@mui/material";
 
 const useStyles = makeStyles({
@@ -43,18 +43,11 @@ const useStyles = makeStyles({
 });
 
 export default function Layout(props) {
+
   const classes = useStyles();
-  const [email, setEmail] = useState("");
-  const [user, setUser] = useState(null);
+
   const [mode, setMode] = useState("light");
 
-  onAuthStateChanged(auth, (userx) => {
-    if (typeof userx != "undefined" && userx != null) {
-      setUser(userx);
-    } else {
-      setUser(null);
-    }
-  });
 
   const lightTheme = createTheme({
     typography: {
@@ -98,7 +91,9 @@ export default function Layout(props) {
     },
   });
 
-  react.useEffect(() => {}, []);
+
+
+   
 
   return (
     <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
@@ -125,6 +120,7 @@ export default function Layout(props) {
           <Sidebar className={classes.drawer} mode={mode} />
         </Box>
         <Box width="100%" height="100%" sx={{}}>
+         
           <Feed children={props.children} className={classes.page} />
         </Box>
       </Box>

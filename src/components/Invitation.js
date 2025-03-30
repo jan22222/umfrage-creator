@@ -23,7 +23,7 @@ import {
 import { query, where } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 
 export default function Invitation(props) {
   const { surveyId, creatorId } = useParams();

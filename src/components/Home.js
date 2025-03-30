@@ -1,7 +1,7 @@
 import react, { useState } from "react";
 import { onSnapshot, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 import {
   Box,
   Card,
@@ -21,17 +21,35 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import { AuthContext } from "../AuthProvider";
+import { useContext } from "react";
+
+
 
 export default function Home() {
+
+
+
+
+    const { createUser,
+    user,
+    userId,
+    userDisplayName,
+    userEmail,
+    userPhotoURL,
+    
+    loginUser,
+    logOut,
+    loading,
+    isLoggedIn } = useContext(AuthContext);
+
   const [invitations, setInvitations] = react.useState([]);
-  const [isLoading, setIsLoading] = react.useState(true);
-  const [isLoggedIn, setIsloggedIn] = react.useState(false);
-  const [email, setEmail] = useState("");
-  const [user, setUser] = useState(null);
+
+ 
+
 
   function loadInvitations(user) {
-    console.log(user);
-    console.log(user.email);
+ 
 
     const colRef = collection(db, "Invitations " + user.email);
     const unsubscribe = onSnapshot(colRef, (snapshot) => {
@@ -59,9 +77,7 @@ export default function Home() {
 
   onAuthStateChanged(auth, (user) => {
     if (user != null) {
-      setIsloggedIn(true);
-      setEmail(user.email);
-      console.log("hi");
+
       loadInvitations(user);
     }
   });

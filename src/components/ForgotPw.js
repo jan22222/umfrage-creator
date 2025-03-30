@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth from "../firebase";
 import { NavLink, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 

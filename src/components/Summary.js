@@ -21,7 +21,7 @@ import { QuestionAnswer } from "@mui/icons-material";
 import { CircularProgress, Card } from "@mui/material";
 import { styled } from "@mui/system";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth from "../firebase";
 
 export const UserContext = createContext(null);
 

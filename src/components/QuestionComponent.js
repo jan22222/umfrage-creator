@@ -23,7 +23,7 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import auth  from "../firebase";
 import UserContext from "./Editorquestions.js";
 const states = [];
 

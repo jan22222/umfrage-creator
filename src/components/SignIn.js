@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useEffect, useState, useContext } from "react";
+
 
 import { NavLink, useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
@@ -17,41 +17,45 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { getAuth } from "firebase/auth";
+
 // TODO remove, this demo shouldn't need to reset the theme.
 import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
+
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
+  import { AuthContext } from "../AuthProvider";
 const defaultTheme = createTheme();
 
 export default function SignIn(props) {
+
   const [isLoggedIn, setIsloggedIn] = React.useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errormessage, setErrormessage] = useState("");
-
-  const [user, setUser] = useState(null);
+  const [errormessage, setErrormessage] = useState("")
   const { message } = useParams();
   const navigate = useNavigate();
+
+  
+    const { user, loginUser, loading } = useContext(AuthContext);
+
 
   React.useEffect(() => {}, []);
 
   onAuthStateChanged(auth, (userx) => {
     if (typeof userx != "undefined" && userx != null) {
-      navigate("/logout");
+      navigate("/home");
     } else {
-      setUser(null);
+      
     }
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    signInWithEmailAndPassword(auth, email, password)
+    loginUser(email, password)
       .then((userCredential) => {
         navigate("/home");
       })

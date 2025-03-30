@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth from "../firebase";
 import Alert from "@mui/material/Alert";
 import emailjs from "@emailjs/browser";
 import Avatar from "@mui/material/Avatar";
@@ -19,14 +19,30 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
+  import { AuthContext } from "../AuthProvider";
+import { useContext } from "react";
+
+
+
 const Signup = () => {
+
+    const { createUser,
+    user,
+    userId,
+    userDisplayName,
+    userEmail,
+    userPhotoURL,
+    
+    loginUser,
+    logOut,
+    loading,
+    isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errormessage, setErrormessage] = useState("");
 
-  const [user, setUser] = useState(null);
   //Check for valid REgistration values gets prepared here.
 
   function ValidateEmail(input) {

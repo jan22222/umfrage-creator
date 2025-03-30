@@ -5,7 +5,7 @@ import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 import AnswersVoteForm from "./AnswersVoteForm";
 
 export default function AnswersForCarousel(props) {

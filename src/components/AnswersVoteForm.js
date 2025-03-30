@@ -11,7 +11,7 @@ import {onSnapshot, setIndexConfiguration} from "firebase/firestore";
 import { db } from '../firebase'
 import {collection, updateDoc, addDoc, setDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import  auth  from "../firebase";
 
 export default function ErrorRadios(props) {
   const [answerText, setAnswerText] = React.useState("");

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+
 import {
   Box,
   Button,
@@ -19,34 +18,51 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-const states = [];
+  import { useSelector, useDispatch } from "react-redux";
+import { createSurvey, updateSurvey, deleteSurvey, loadSurveys } from "../surveyslice";
 
-const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [tableData, setTableData] = useState(() => data);
-  const [validationErrors, setValidationErrors] = useState({});
-  const [email, setEmail] = useState("");
-  const [user, setUser] = useState(null);
-
-  onAuthStateChanged(auth, (userx) => {
-    if (typeof userx != "undefined" && userx != null) {
-      setUser(userx);
-    } else {
-      setUser(null);
-    }
-  });
-
-  useEffect(() => {
-    setTableData(data);
-  }, [data]);
+import { AuthContext } from "../AuthProvider";
+import { useContext } from "react";
 
   const handleCreateNewRow = (values) => {
     createSurvey(values);
   };
 
-  const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+  const handleDeleteRow = (row, surveyData) => {
+    console.log("delete row");
+     
+    deleteSurvey(surveyData[row.id].id);
+  };
+
+const SurveysComponent = () => {
+    const { createUser,
+    user,
+    userId,
+    userDisplayName,
+    userEmail,
+    userPhotoURL,
+    loginUser,
+    logOut,
+    loading,
+    isLoggedIn } = useContext(AuthContext);
+
+  const dispatch = useDispatch()
+ 
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const isLoading = useSelector((state) => state.surveys.isLoading)
+  const surveyData = useSelector((state) =>state.surveys.surveys)
+
+
+
+  useEffect(()=>{
+    dispatch(loadSurveys(userId))
+    console.log(",mm,mmn", surveyData)
+    },[userId])
+
+    const handleSaveRowEdits = async ({ exitEditingMode, row, values, surveyData }) => {
     if (!Object.keys(validationErrors).length) {
-      tableData[row.index] = values;
+      surveyData[row.index] = values;
       //send/receive api updates here, then refetch or update local table data for re-render
       console.log(values);
       updateSurvey(values);
@@ -56,11 +72,6 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
 
   const handleCancelRowEdits = () => {
     setValidationErrors({});
-  };
-
-  const handleDeleteRow = (row) => {
-    console.log("delete row");
-    deleteSurvey(tableData[row.id].id);
   };
 
   const getCommonEditTextFieldProps = useCallback(
@@ -115,7 +126,8 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
 
   return (
     <>
-      {user != null ? (
+      {
+      userId!="" ? (
         <Card padding="max(20px,20%)">
           <MaterialReactTable
             displayColumnDefOptions={{
@@ -127,7 +139,7 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
               },
             }}
             columns={columns}
-            data={tableData}
+            data={surveyData}
             editingMode="modal" //default
             enableColumnOrdering
             enableEditing
@@ -143,7 +155,7 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
                 <Tooltip arrow placement="right" title="Löschen">
                   <IconButton
                     color="error"
-                    onClick={() => handleDeleteRow(row)}
+                    onClick={() => handleDeleteRow(row, surveyData)}
                   >
                     <Delete />
                   </IconButton>
@@ -151,7 +163,7 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
                 <Tooltip arrow placement="right" title="ansehen">
                   <IconButton color="error">
                     <a
-                      href={"/survey/" + user.uid + "/" + tableData[row.id].id}
+                      href={"/survey/" + userId + "/" + surveyData[row.id].id}
                     >
                       <ArrowForwardIosIcon />
                     </a>
@@ -162,8 +174,8 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
                     color="error"
                     display={{ xs: "none", md: "block" }}
                   >
-                    <a href={"/vote/" + user.uid + "/" + tableData[row.id].id}>
-                      Abstimmung
+                    <a href={"/vote/" + userId + "/" + surveyData[row.id].id}> 
+                      Voting
                     </a>
                   </IconButton>
                 </Tooltip>
@@ -175,9 +187,9 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
                     <a
                       href={
                         "/survey/" +
-                        user.uid +
+                        userId +
                         "/" +
-                        tableData[row.id].id +
+                       surveyData[row.id].id +
                         "/invitation"
                       }
                     >
@@ -191,9 +203,9 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
                     display={{ xs: "none", md: "block" }}
                   >
                     <a
-                      href={"/summary/" + user.uid + "/" + tableData[row.id].id}
+                      href={"/summary/" + userId + "/" + surveyData[row.id].id}
                     >
-                      Ergebnisse
+                      Results
                     </a>
                   </IconButton>
                 </Tooltip>
@@ -205,7 +217,7 @@ const Example = ({ data, deleteSurvey, updateSurvey, createSurvey }) => {
                 onClick={() => setCreateModalOpen(true)}
                 variant="contained"
               >
-                Neue Umfrage erstellen
+                New survey
               </Button>
             )}
           />
@@ -288,4 +300,4 @@ const validateEmail = (email) =>
     );
 const validateAge = (age) => age >= 18 && age <= 50;
 
-export default Example;
+export default SurveysComponent;
